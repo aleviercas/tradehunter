@@ -28,7 +28,7 @@
         .quad-count { font-family: monospace; color: var(--muted); }
         .search-bar { padding: 6px 12px; display: flex; gap: 6px; border-bottom: 1px solid var(--border); position: relative; }
         .search-bar input { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 11px; flex-grow: 1; }
-        .suggestions-dropdown { position: absolute; top: 100%; left: 12px; right: 50px; background: var(--surface); border: 1px solid var(--border); border-top: none; z-index: 100; max-height: 150px; overflow-y: auto; display: none; border-radius: 0 0 4px 4px; }
+        .suggestions-dropdown { position: absolute; top: 100%; left: 12px; right: 50px; background: var(--surface); border: 1px solid var(--border); border-top: none; z-index: 100; max-height: 180px; overflow-y: auto; display: none; border-radius: 0 0 4px 4px; }
         .sug-item { padding: 6px 10px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
         .sug-item:hover { background: var(--surface-hover); }
         .sug-item span { color: var(--muted); font-size: 10px; }
@@ -87,7 +87,7 @@
         <div class="quad active-tab" id="q0">
             <div class="quad-header"><h2 id="lbl_portfolio">Mi Portfolio</h2><span class="quad-count" id="countLeft">0</span></div>
             <div class="search-bar">
-                <input type="text" id="addInput" placeholder="Buscar ticker o empresa (ej: micron)..." autocomplete="off">
+                <input type="text" id="addInput" placeholder="Escribe cualquier símbolo de Wall Street (ej: PLTR, SOXL)..." autocomplete="off">
                 <button class="btn btn-add" id="btnAdd">＋</button>
                 <div class="suggestions-dropdown" id="sugDropdown"></div>
             </div>
@@ -146,17 +146,9 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
     const i18n = {
-        es: { portfolio: "Mi Portfolio", market: "Mercado Ampliado", chart: "Gráfico Interactivo", analysis: "Matriz de Indicadores", news: "Noticias y Contexto Sentimental", match: "CONFLUENCIA", lagger: "SIN SEÑAL", loading: "Cargando flujos...", fundamental: "Fundamental", technical: "Técnico", sentimental: "Sentimental", newsDesc: "Anomalía de volumen real detectada en la estructura." },
+        es: { portfolio: "Mi Portfolio", market: "Mercado Ampliado", chart: "Gráfico Interactivo", analysis: "Matriz de Indicadores", news: "Noticias y Contexto Sentimental", match: "CONFLUENCIA", lagger: "SIN SEÑAL", loading: "Buscando flujos de mercado...", fundamental: "Fundamental", technical: "Técnico", sentimental: "Sentimental", newsDesc: "Anomalía de volumen institucional detectada en el precio." },
         en: { portfolio: "My Watchlist", market: "Extended Market", chart: "Live Chart", analysis: "Indicator Matrix", news: "News & Sentiment Stream", match: "CONFLUENCE", lagger: "NO SIGNAL", loading: "Loading streams...", fundamental: "Fundamental", technical: "Technical", sentimental: "Sentimental", newsDesc: "Volume anomaly detected on market structure." }
     };
-
-    const companyDirectory = [
-        { ticker: "MU", name: "Micron Technology" }, { ticker: "AAPL", name: "Apple Inc." }, { ticker: "MSFT", name: "Microsoft Corporation" },
-        { ticker: "GOOGL", name: "Alphabet Google" }, { ticker: "AMZN", name: "Amazon.com Inc." }, { ticker: "NVDA", name: "NVIDIA Corporation" },
-        { ticker: "TSLA", name: "Tesla Inc." }, { ticker: "AMD", name: "Advanced Micro Devices" }, { ticker: "META", name: "Meta Platforms" },
-        { ticker: "RBLX", name: "Roblox Corporation" }, { ticker: "NFLX", name: "Netflix Inc." }, { ticker: "EQT", name: "EQT Corporation" },
-        { ticker: "UAL", name: "United Airlines" }, { ticker: "MRVL", name: "Marvell Technology" }, { ticker: "CMCSA", name: "Comcast Corp" }, { ticker: "ALLY", name: "Ally Financial" }
-    ];
 
     let lang = localStorage.getItem("th_lang") || "es";
     let theme = localStorage.getItem("th_theme") || "dark";
@@ -164,10 +156,12 @@
     let cache = {};
     let currentSort = { portfolio: { key: null, asc: true }, suggestions: { key: null, asc: true } };
 
-    const suggestions = ["EQT", "UAL", "MRVL", "CMCSA", "ALLY", "AMD", "META", "MSFT", "AAPL", "GOOGL", "AMZN", "NVDA", "TSLA", "NFLX", "RBLX", "MU"];
+    // Lista semilla inicial con activos calientes, el radar crecerá ilimitadamente según busques
+    let suggestions = [
+        "EQT", "UAL", "MRVL", "CMCSA", "ALLY", "AMD", "META", "MSFT", "AAPL", "GOOGL", "AMZN", "NVDA", "TSLA", "NFLX", "RBLX", "MU",
+        "INTC", "QCOM", "AVGO", "SMCI", "PLTR", "COIN", "BABA", "JPM", "BAC", "XOM", "WMT", "DIS", "SPY", "QQQ"
+    ];
     let portfolio = JSON.parse(localStorage.getItem("th_p_items")) || ["EQT", "RBLX", "AMD", "MU"];
-
-    const exchangeMap = { "RBLX": "NYSE", "EQT": "NYSE", "ALLY": "NYSE", "MU": "NASDAQ", "AAPL": "NASDAQ", "MSFT": "NASDAQ", "NVDA": "NASDAQ", "AMD": "NASDAQ" };
 
     function translateUI() {
         const t = i18n[lang];
@@ -184,23 +178,21 @@
         document.querySelectorAll('.quad').forEach((q, i) => q.classList.toggle('active-tab', i === index));
     }
 
-    // ALGORITMO DE CONTINGENCIA TOTALMENTE DETERMINISTA
     function generateFallbackMetrics(ticker) {
         let hash = 0;
         for (let i = 0; i < ticker.length; i++) hash = ticker.charCodeAt(i) + ((hash << 5) - hash);
-        const rsi = Math.abs((hash % 35) + 25);
-        const fwdPE = Math.abs((hash % 22) + 11);
-        const relVol = Math.abs(((hash % 10) / 6) + 0.7);
+        const rsi = Math.abs((hash % 38) + 24);
+        const fwdPE = Math.abs((hash % 24) + 10);
+        const relVol = Math.abs(((hash % 10) / 5) + 0.6);
         let score = 0;
         if (rsi < 35 || rsi > 68) score++;
-        if (fwdPE < 25) score++;
-        if (relVol > 1.1) score++;
-        const nameObj = companyDirectory.find(c => c.ticker === ticker);
-        return { ticker, name: nameObj ? nameObj.name : "Asset Spec", price: Math.abs((hash % 150) + 40), rsi: parseFloat(rsi.toFixed(1)), relVol: parseFloat(relVol.toFixed(1)), fwdPE: parseFloat(fwdPE.toFixed(1)), score };
+        if (fwdPE < 22) score++;
+        if (relVol > 1.2) score++;
+        return { ticker, name: ticker + " Corp Equity", price: Math.abs((hash % 180) + 30), rsi: parseFloat(rsi.toFixed(1)), relVol: parseFloat(relVol.toFixed(1)), fwdPE: parseFloat(fwdPE.toFixed(1)), score };
     }
 
     function calculateRealRSI(closePrices) {
-        if (!closePrices || closePrices.length < 14) return 34.2;
+        if (!closePrices || closePrices.length < 14) return 35.0;
         let gains = 0, losses = 0;
         for (let i = closePrices.length - 14; i < closePrices.length; i++) {
             let diff = closePrices[i] - closePrices[i - 1];
@@ -212,20 +204,13 @@
 
     async function dataFetch(ticker) {
         try {
-            // Múltiples opciones de proxies libres para evitar caídas de red y bloqueos CORS locales
-            const proxies = ["https://corsproxy.io/?", "https://api.allorigins.win/raw?url="];
+            const proxy = "https://corsproxy.io/?";
             const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=3mo`;
             
-            let res, json;
-            try {
-                res = await fetch(proxies[0] + encodeURIComponent(url));
-                json = await res.json();
-            } catch(e) {
-                // Intento con el segundo proxy de respaldo si el primero falla
-                res = await fetch(proxies[1] + encodeURIComponent(url));
-                json = await res.json();
-            }
-
+            const res = await fetch(proxy + encodeURIComponent(url));
+            if (!res.ok) throw new Error("CORS lock");
+            
+            const json = await res.json();
             const r = json.chart.result[0];
             const meta = r.meta;
             const indicators = r.indicators.quote[0];
@@ -237,11 +222,11 @@
             const avgVol = volumes.slice(-20).reduce((a, b) => a + b, 0) / Math.min(volumes.length, 20);
             const relVol = parseFloat((todayVol / avgVol).toFixed(1));
 
-            let fwdPE = meta.trailingPE ? parseFloat(meta.trailingPE.toFixed(1)) : parseFloat(((ticker.charCodeAt(0) % 20) + 12).toFixed(1));
+            let fwdPE = meta.trailingPE ? parseFloat(meta.trailingPE.toFixed(1)) : parseFloat(((ticker.charCodeAt(0) % 18) + 12).toFixed(1));
 
             let score = 0;
-            if (rsi < 36 || rsi > 68) score++;
-            if (fwdPE < 26) score++;
+            if (rsi < 35 || rsi > 68) score++;
+            if (fwdPE < 25) score++;
             if (relVol > 1.2) score++;
 
             return { ticker, name: meta.longName || ticker, price: meta.regularMarketPrice || closePrices[closePrices.length - 1], rsi, relVol, fwdPE, score };
@@ -325,15 +310,14 @@
         document.getElementById("activeChart").innerText = ticker;
         document.getElementById("activeAnalysis").innerText = ticker;
 
-        const exchange = exchangeMap[ticker] || "NASDAQ";
         const container = document.getElementById("tvWidget");
-        container.innerHTML = `<div class="loading">${lang === 'es' ? 'Inicializando canal...' : 'Streaming track...'}</div>`;
+        container.innerHTML = `<div class="loading">Streaming...</div>`;
         
         setTimeout(() => {
             if (typeof TradingView !== 'undefined') {
                 container.innerHTML = "";
                 new TradingView.widget({
-                    "autosize": true, "symbol": `${exchange}:${ticker}`, "interval": "D", "theme": theme, "style": "1", "locale": lang, "hide_side_toolbar": true, "container_id": "tvWidget"
+                    "autosize": true, "symbol": `${ticker}`, "interval": "D", "theme": theme, "style": "1", "locale": lang, "hide_side_toolbar": true, "container_id": "tvWidget"
                 });
             }
         }, 100);
@@ -361,22 +345,43 @@
     const addInput = document.getElementById("addInput");
     const sugDropdown = document.getElementById("sugDropdown");
 
-    addInput.addEventListener("input", () => {
+    // PETICIÓN INTERACTIVA REAL A YAHOO PARA COMPROBAR CUALQUIER TICKER DEL MUNDO EN VIVO
+    addInput.addEventListener("input", async () => {
         const query = addInput.value.trim().toLowerCase();
         sugDropdown.innerHTML = "";
-        if (!query) { sugDropdown.style.display = "none"; return; }
+        if (!query || query.length < 1) { sugDropdown.style.display = "none"; return; }
 
-        const matches = companyDirectory.filter(c => c.name.toLowerCase().includes(query) || c.ticker.toLowerCase().includes(query));
-        if (matches.length > 0) {
-            matches.forEach(m => {
-                const div = document.createElement("div");
-                div.className = "sug-item";
-                div.innerHTML = `${m.ticker} <span>${m.name}</span>`;
-                div.addEventListener("click", () => { addInput.value = m.ticker; sugDropdown.style.display = "none"; mutate(m.ticker, false); });
-                sugDropdown.appendChild(div);
-            });
-            sugDropdown.style.display = "block";
-        } else { sugDropdown.style.display = "none"; }
+        try {
+            const proxy = "https://corsproxy.io/?";
+            const searchUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&quotesCount=6&newsCount=0`;
+            const res = await fetch(proxy + encodeURIComponent(searchUrl));
+            const json = await res.json();
+            
+            if (json.quotes && json.quotes.length > 0) {
+                json.quotes.forEach(m => {
+                    if (!m.symbol) return;
+                    const div = document.createElement("div");
+                    div.className = "sug-item";
+                    div.innerHTML = `${m.symbol} <span>${m.longname || m.shortname || 'Asset'}</span>`;
+                    div.addEventListener("click", () => {
+                        const tk = m.symbol.toUpperCase();
+                        addInput.value = tk;
+                        sugDropdown.style.display = "none";
+                        
+                        // Si no existe en la lista de mercado ampliado, se indexa dinámicamente en vivo
+                        if (!suggestions.includes(tk) && !portfolio.includes(tk)) {
+                            suggestions.push(tk);
+                        }
+                        mutate(tk, false);
+                    });
+                    sugDropdown.appendChild(div);
+                });
+                sugDropdown.style.display = "block";
+            }
+        } catch(e) {
+            // Plan de contingencia si falla la red en la búsqueda
+            sugDropdown.style.display = "none";
+        }
     });
 
     document.addEventListener("click", (e) => { if (!addInput.contains(e.target) && !sugDropdown.contains(e.target)) { sugDropdown.style.display = "none"; } });
@@ -385,7 +390,12 @@
         const cleanTicker = ticker.trim().toUpperCase();
         if (!cleanTicker) return;
 
-        if(remove) { portfolio = portfolio.filter(t => t !== cleanTicker); } else { if(!portfolio.includes(cleanTicker)) portfolio.push(cleanTicker); addInput.value = ""; }
+        if(remove) { 
+            portfolio = portfolio.filter(t => t !== cleanTicker); 
+        } else { 
+            if(!portfolio.includes(cleanTicker)) portfolio.push(cleanTicker); 
+            addInput.value = ""; 
+        }
         localStorage.setItem("th_p_items", JSON.stringify(portfolio));
         renderLists().then(() => {
             if(selected === cleanTicker && remove && portfolio.length > 0) selectAsset(portfolio[0]);
@@ -393,7 +403,14 @@
         });
     }
 
-    document.getElementById("btnAdd").addEventListener("click", () => { mutate(addInput.value, false); });
+    document.getElementById("btnAdd").addEventListener("click", () => { 
+        const tk = addInput.value.trim().toUpperCase();
+        if(tk) {
+            if(!suggestions.includes(tk)) suggestions.push(tk);
+            mutate(tk, false); 
+        }
+    });
+    
     document.getElementById("langToggle").addEventListener("click", () => { lang = lang === "es" ? "en" : "es"; localStorage.setItem("th_lang", lang); translateUI(); renderLists().then(() => { if(selected) selectAsset(selected); }); });
     document.getElementById("themeToggle").addEventListener("click", () => { theme = theme === "dark" ? "light" : "dark"; localStorage.setItem("th_theme", theme); document.body.classList.toggle("light", theme === "light"); document.getElementById("themeToggle").innerText = theme === "light" ? "☀️ LIGHT" : "🌙 DARK"; if(selected) selectAsset(selected); });
 
