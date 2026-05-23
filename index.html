@@ -14,7 +14,6 @@
         header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .brand { display: flex; align-items: center; gap: 8px; }
         .brand h1 { font-size: 13px; font-weight: 900; letter-spacing: 0.8px; color: var(--text); }
-        .brand span { background: var(--accent); color: #000; padding: 2px 5px; border-radius: 3px; font-size: 8px; font-weight: 900; letter-spacing: 0.3px; }
         .meta-controls { display: flex; align-items: center; gap: 8px; }
         #syncTime { color: var(--muted); font-family: monospace; font-size: 10px; margin-right: 4px; }
         .btn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; }
@@ -29,9 +28,10 @@
         .quad-count { font-family: monospace; color: var(--muted); }
         .search-bar { padding: 6px 12px; display: flex; gap: 6px; border-bottom: 1px solid var(--border); position: relative; }
         .search-bar input { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 11px; flex-grow: 1; }
-        .suggestions-dropdown { position: absolute; top: 100%; left: 12px; right: 50px; background: var(--surface); border: 1px solid var(--border); border-top: none; z-index: 100; max-height: 140px; overflow-y: auto; display: none; }
-        .sug-item { padding: 6px 10px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+        .suggestions-dropdown { position: absolute; top: 100%; left: 12px; right: 12px; background: var(--surface); border: 1px solid var(--border); border-top: none; z-index: 100; max-height: 160px; overflow-y: auto; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .sug-item { padding: 6px 10px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .sug-item:hover { background: var(--surface-hover); }
+        .sug-item span { font-size: 9px; color: var(--muted); max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .content { flex-grow: 1; overflow-y: auto; padding: 4px; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th { font-size: 9px; color: var(--muted); text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); cursor: pointer; }
@@ -47,7 +47,19 @@
         .analysis-box { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 4px; }
         .score-banner { background: var(--surface); border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
         .score-banner h3 { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.3px; }
-        .score-badge { font-size: 15px; font-family: monospace; font-weight: 900; color: var(--accent); }
+        .score-badge-wrapper { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+        .score-badge { font-size: 15px; font-family: monospace; font-weight: 900; line-height: 1; }
+        .confluence-label { font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 2px; text-transform: uppercase; font-family: monospace; letter-spacing: 0.5px; }
+        
+        /* GAMA TÉRMICA DINÁMICA DE SCORE */
+        .score-high { color: var(--green) !important; }
+        .score-mid { color: var(--accent) !important; }
+        .score-low { color: var(--red) !important; }
+
+        .confluence-label.high { background: rgba(0, 255, 102, 0.15); color: var(--green); border: 1px solid rgba(0, 255, 102, 0.3); }
+        .confluence-label.mid { background: rgba(255, 95, 31, 0.15); color: var(--accent); border: 1px solid rgba(255, 95, 31, 0.3); }
+        .confluence-label.low { background: rgba(255, 51, 51, 0.15); color: var(--red); border: 1px solid rgba(255, 51, 51, 0.3); }
+
         .analysis-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
         .pillar-card { background: var(--surface); border: 1px solid var(--border); padding: 6px; border-radius: 4px; cursor: pointer; transition: border-color 0.2s; }
         .pillar-card:hover, .pillar-card.active-pillar { border-color: var(--accent); }
@@ -57,7 +69,6 @@
         
         .explanation-box { font-size: 9.5px; color: var(--muted); line-height: 1.35; background: var(--surface); border: 1px solid var(--border); padding: 6px 8px; border-radius: 4px; min-height: 75px; }
         .explanation-box strong { color: var(--text); display: block; margin-bottom: 3px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px;}
-        .interpretation-badge { display: inline-block; padding: 2px 4px; border-radius: 2px; font-size: 8.5px; font-weight: 700; margin-top: 4px; font-family: monospace; text-transform: uppercase; }
         
         .disclaimer-box { font-size: 8px; color: #ff3333; opacity: 0.8; padding: 4px; line-height: 1.2; font-style: italic; border-top: 1px solid var(--border); }
 
@@ -75,7 +86,7 @@
 <body>
 
     <header>
-        <div class="brand"><h1>TRADE HUNTER</h1><span id="ui_subBrand">ANALYTICS</span></div>
+        <div class="brand"><h1>TRADE HUNTER</h1></div>
         <div class="meta-controls">
             <div id="syncTime">--:--:--</div>
             <button id="langToggle" class="btn">🌐 ES</button>
@@ -94,8 +105,7 @@
         <div class="quad active-tab" id="q0">
             <div class="quad-header"><h2 id="ui_titleWatchlist">Mi Watchlist</h2><span class="quad-count" id="countLeft">0</span></div>
             <div class="search-bar">
-                <input type="text" id="addInput" placeholder="Buscar ticker (ej: TSLA, NVDA)...">
-                <button class="btn" style="background:var(--text); color:var(--bg); border:none; font-weight:700;" id="btnAdd">＋</button>
+                <input type="text" id="addInput" placeholder="Buscar ticker global o nombre (ej: BE, TSLA)..." autocomplete="off">
                 <div class="suggestions-dropdown" id="sugDropdown"></div>
             </div>
             <div class="content">
@@ -142,9 +152,11 @@
                     <div class="score-banner">
                         <div>
                             <h3 id="ui_bannerTitle">Score Algorítmico Ponderado</h3>
-                            <span style="font-size: 8.5px; color: var(--muted);" id="ui_bannerSub">Procesamiento Analítico de Datos</span>
                         </div>
-                        <div class="score-badge" id="totalScore">-- / 100</div>
+                        <div class="score-badge-wrapper">
+                            <div class="score-badge" id="totalScore">-- / 100</div>
+                            <div class="confluence-label" id="confluenceBadge" style="display:none;">---</div>
+                        </div>
                     </div>
                     
                     <div class="analysis-pillars">
@@ -171,7 +183,7 @@
                     <div class="explanation-box" id="explanationDynamicBox"></div>
 
                     <div class="broker-comparator">
-                        <h4><span id="ui_brokerTitle">Pasarelas Operativas Recomendadas</span></h4>
+                        <h4><span id="ui_brokerTitle">Pasarelas Operativas</span></h4>
                         <div id="brokersContainer" style="display: flex; flex-direction: column; gap: 4px;"></div>
                     </div>
 
@@ -190,31 +202,36 @@
     let cache = {};
     let currentSort = { portfolio: { key: 'weightedScore', asc: false }, suggestions: { key: 'weightedScore', asc: false } };
 
-    let suggestions = ["EQT", "UAL", "MRVL", "CMCSA", "ALLY", "AMD", "META", "MSFT", "AAPL", "GOOGL", "AMZN", "NVDA", "TSLA", "PLTR", "COIN", "SPY"];
-    let portfolio = JSON.parse(localStorage.getItem("th_p_items")) || ["MU", "AMD", "PLTR"];
+    // Lista fallback local inmediata por si el internet o servidores externos van lentos
+    const localFallbackDirectory = [
+        { symbol: "BE", name: "Bloom Energy Corporation" }, { symbol: "MU", name: "Micron Technology" },
+        { symbol: "AAPL", name: "Apple Inc." }, { symbol: "TSLA", name: "Tesla Motors" },
+        { symbol: "NVDA", name: "NVIDIA Corp" }, { symbol: "AMD", name: "Advanced Micro Devices" },
+        { symbol: "MSFT", name: "Microsoft Corporation" }, { symbol: "AMZN", name: "Amazon.com Inc." },
+        { symbol: "GOOGL", name: "Alphabet Google" }, { symbol: "META", name: "Meta Platforms" }
+    ];
+
+    let suggestions = ["BE", "MU", "AAPL", "NVDA", "TSLA", "AMD", "META", "MSFT", "GOOGL", "AMZN"];
+    let portfolio = JSON.parse(localStorage.getItem("th_p_items")) || ["BE", "MU", "AAPL"];
 
     const dictionary = {
         es: {
-            subBrand: "ANALYTICS", watchlist: "Mi Watchlist", mktScanner: "Escaner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluencia",
-            bannerTitle: "Score Algorítmico Ponderado", bannerSub: "Procesamiento de Ratios Estadísticos", loadChart: "Selecciona un activo",
+            watchlist: "Mi Watchlist", mktScanner: "Escaner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluencia",
+            bannerTitle: "Score Algorítmico Ponderado", loadChart: "Selecciona un activo",
             t_tk: "Ticker", t_pr: "Precio", t_sc: "Pond. Score", lbl_margin: "Margen", lbl_insider: "Insider", brokerTitle: "Estructuras de Corretaje Compatibles",
-            brokerBtn: "Revisar Bróker", searchPlaceholder: "Buscar ticker (ej: TSLA, NVDA)...",
+            brokerBtn: "Revisar Bróker", searchPlaceholder: "Buscar ticker global o nombre (ej: BE, TSLA)...",
             disclaimer: "⚠️ Advertencia de Datos: Esta plataforma procesa métricas matemáticas agregadas y flujos de información computada. No provee, bajo ninguna circunstancia, asesoramiento financiero, gestión de carteras ni recomendaciones explícitas o implícitas de inversión o compra.",
             initHelp: "<strong>Guía de Análisis Estadístico</strong> Selecciona un activo de tu lista para procesar las lecturas matriciales complejas en tiempo real.",
             
-            // Títulos de explicaciones dinámicas
-            title_f: "Evaluación Estructural Fundamental",
-            title_t: "Análisis Cuantitativo Técnico",
-            title_s: "Muestreo del Sentimiento de Flujos",
+            conf_high: "Confluencia Alta", conf_mid: "Confluencia Media", conf_low: "Confluencia Baja",
+            title_f: "Evaluación Estructural Fundamental", title_t: "Análisis Cuantitativo Técnico", title_s: "Muestreo del Sentimiento de Flujos",
 
-            // Estados de interpretación analítica contextualizada
             pe_high: "El PER estimado de {val}x denota múltiplos premium de valoración de mercado corporativo.",
             pe_low: "El múltiplo PER de {val}x se sitúa en rangos de valoración comprimida respecto a pares sectoriales.",
             eps_high: "El beneficio por acción (EPS) de ${val} sostiene la base orgánica de la estructura financiera.",
             eps_low: "Ratios de EPS en ${val} reflejan una etapa de estrechez en márgenes o reinversión masiva de capital.",
             margin_high: "El margen operativo del {val}% confirma retención eficiente y ventajas competitivas robustas.",
             margin_low: "Márgenes del {val}% sugieren sensibilidad elevada a costos directos y volatilidad de operación.",
-            
             rsi_overbought: "El oscilador RSI (14d) se localiza en {val}, un extremo estadístico de sobreextensión alcista.",
             rsi_oversold: "Lectura de RSI en {val} determina condiciones maduras de sobreventa o capitulación técnica.",
             rsi_neutral: "El oscilador se equilibra en {val}, mostrando una distribución neutral de la fuerza del precio.",
@@ -222,7 +239,6 @@
             sma_low: "El precio se sitúa {val}% debajo de la SMA20, denotando un descuento estadístico de corto plazo.",
             beta_high: "El coeficiente Beta de {val} advierte una sensibilidad y volatilidad superior al índice ponderado.",
             beta_low: "Un Beta defensivo de {val} indica una correlación amortiguada y menor riesgo sistemático.",
-            
             rvol_high: "Pico de volumen relativo en {val}x confirma la participación activa de bloques algorítmicos institucionales.",
             rvol_low: "Transacciones en {val}x reflejan baja participación institucional y un libro de órdenes ralentizado.",
             short_high: "Un Short Ratio elevado del {val}% incrementa la probabilidad matemática de un Short Squeeze por cobertura.",
@@ -231,16 +247,15 @@
             insider_dist: "El flujo insider registra patrones de Distribución o liquidación ordinaria de acciones."
         },
         en: {
-            subBrand: "ANALYTICS", watchlist: "My Watchlist", mktScanner: "Market Scanner", technicalChart: "Technical Chart", matrixTitle: "Confluence Matrix",
-            bannerTitle: "Weighted Algorithmic Score", bannerSub: "Statistical Ratio Processing", loadChart: "Select an asset",
+            watchlist: "My Watchlist", mktScanner: "Market Scanner", technicalChart: "Technical Chart", matrixTitle: "Confluence Matrix",
+            bannerTitle: "Weighted Algorithmic Score", loadChart: "Select an asset",
             t_tk: "Ticker", t_pr: "Price", t_sc: "W. Score", lbl_margin: "Margin", lbl_insider: "Insider", brokerTitle: "Compatible Brokerage Frameworks",
-            brokerBtn: "Review Broker", searchPlaceholder: "Search ticker (e.g. TSLA, NVDA)...",
+            brokerBtn: "Review Broker", searchPlaceholder: "Search global ticker or name (e.g. BE, TSLA)...",
             disclaimer: "⚠️ Data Disclaimer: This platform processes aggregated mathematical metrics and computer data flows. It does not provide, under any circumstances, financial advice, portfolio management, or explicit/implicit investment or buy recommendations.",
             initHelp: "<strong>Statistical Analysis Guide</strong> Select an asset from your watchlist to process complex matrix reads in real time.",
             
-            title_f: "Fundamental Structural Evaluation",
-            title_t: "Technical Quantitative Analysis",
-            title_s: "Flow Sentiment Sampling",
+            conf_high: "High Confluence", conf_mid: "Mid Confluence", conf_low: "Low Confluence",
+            title_f: "Fundamental Structural Evaluation", title_t: "Technical Quantitative Analysis", title_s: "Flow Sentiment Sampling",
 
             pe_high: "Estimated PE of {val}x denotes premium valuation multiples in the corporate marketplace.",
             pe_low: "The PE multiple of {val}x sits in compressed valuation ranges relative to sector peers.",
@@ -248,7 +263,6 @@
             eps_low: "EPS ratios at ${val} reflect a phase of tight margins or heavy capital reinvestment.",
             margin_high: "Operating margin at {val}% confirms efficient retention and robust competitive advantages.",
             margin_low: "Margins at {val}% suggest high sensitivity to direct costs and operating volatility.",
-            
             rsi_overbought: "The RSI (14d) oscillator stands at {val}, a statistical extreme of bullish overextension.",
             rsi_oversold: "RSI reading at {val} determines mature conditions of oversold territory or technical capitulation.",
             rsi_neutral: "The oscillator balances at {val}, showing a neutral distribution of price strength.",
@@ -256,59 +270,22 @@
             sma_low: "Price sits {val}% below SMA20, denoting a short-term statistical discount.",
             beta_high: "Beta coefficient of {val} warns of sensitivity and volatility exceeding the benchmark index.",
             beta_low: "A defensive Beta of {val} indicates cushioned correlation and lower systematic risk.",
-            
             rvol_high: "Relative volume spike at {val}x confirms active participation of institutional algorithmic blocks.",
             rvol_low: "Transactions at {val}x reflect low institutional participation and a slow order book.",
             short_high: "A high Short Ratio of {val}% increases the mathematical probability of a Short Squeeze due to covering.",
             short_low: "Short level controlled at {val}%, with no latent asymmetrical selling pressures.",
             insider_acc: "Corporate internal flow detects activity classified as Position Accumulation.",
             insider_dist: "Insider flow records patterns of ordinary Share Distribution or liquidation."
-        },
-        pt: {
-            subBrand: "ANALYTICS", watchlist: "Minha Watchlist", mktScanner: "Scanner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluência",
-            bannerTitle: "Score Algorítmico Ponderado", bannerSub: "Processamento de Rácios Estatísticos", loadChart: "Selecione um ativo",
-            t_tk: "Ticker", t_pr: "Preço", t_sc: "Score Pond.", lbl_margin: "Margem", lbl_insider: "Insider", brokerTitle: "Estruturas de Corretagem Compatíveis",
-            brokerBtn: "Avaliar Broker", searchPlaceholder: "Buscar ticker (ex: TSLA, NVDA)...",
-            disclaimer: "⚠️ Aviso de Dados: Esta plataforma processa métricas matemáticas agregadas e fluxos de dados computados. Não fornece, sob nenhuma circunstância, consultoria financeira, gestão de carteiras ou recomendações explícitas ou implícitas de investimento ou compra.",
-            initHelp: "<strong>Guia de Análise Estatística</strong> Selecione um ativo da sua lista para processar as leituras matriciais complexas em tempo real.",
-            
-            title_f: "Avaliação Estrutural Fundamental",
-            title_t: "Análise Quantitativa Técnica",
-            title_s: "Amostragem de Sentimento de Fluxo",
-
-            pe_high: "O PER estimado de {val}x denota múltiplos premium de avaliação no mercado corporativo.",
-            pe_low: "O múltiplo PER de {val}x situa-se em faixas de avaliação comprimidas em relação aos pares do setor.",
-            eps_high: "O lucro por ação (EPS) de ${val} sustenta a base orgânica da estrutura financeira.",
-            eps_low: "Os rácios de EPS em ${val} refletem uma fase de margens apertadas ou reinvestimento massivo de capital.",
-            margin_high: "A margem operacional de {val}% confirma retenção eficiente e vantagens competitivas robustas.",
-            margin_low: "Margens de {val}% sugerem alta sensibilidade aos custos diretos e volatilidade operacional.",
-            
-            rsi_overbought: "O oscilador RSI (14d) está em {val}, um extremo estatístico de sobreextensão altista.",
-            rsi_oversold: "A leitura do RSI em {val} determina condições maduras de sobrevenda ou capitulação técnica.",
-            rsi_neutral: "O oscilador equilibra-se em {val}, mostrando uma distribuição neutra da força dos preços.",
-            sma_high: "Desvio de {val}% acima da SMA20; o preço opera em faixas de extensão climática.",
-            sma_low: "O preço está {val}% abaixo da SMA20, denotando um desconto estatístico de curto prazo.",
-            beta_high: "O coeficiente Beta de {val} alerta para uma sensibilidade e volatilidade superiores ao índice de referência.",
-            beta_low: "Um Beta defensivo de {val} indica uma correlação amortecida e menor risco sistemático.",
-            
-            rvol_high: "O pico de volume relativo em {val}x confirma a participação ativa de blocos algorítmicos institucionais.",
-            rvol_low: "As transações em {val}x refletem baixa participação institucional e um livro de ordens lento.",
-            short_high: "Um Short Ratio elevado de {val}% aumenta a probabilidade matemática de um Short Squeeze devido à cobertura.",
-            short_low: "Nível de posições vendidas controlado em {val}%, sem pressões de venda assimétricas latentes.",
-            insider_acc: "O fluxo interno corporativo deteta atividade classificada como Acumulação de posições.",
-            insider_dist: "O fluxo de insiders regista padrões de Distribuição ou liquidação ordinária de ações."
         }
     };
 
     function translateUI() {
         const d = dictionary[lang];
-        document.getElementById("ui_subBrand").innerText = d.subBrand;
         document.getElementById("ui_titleWatchlist").innerText = d.watchlist;
         document.getElementById("ui_titleScanner").innerText = d.mktScanner;
         document.getElementById("ui_titleChart").innerText = d.technicalChart;
         document.getElementById("ui_titleMatrix").innerText = d.matrixTitle;
         document.getElementById("ui_bannerTitle").innerText = d.bannerTitle;
-        document.getElementById("ui_bannerSub").innerText = d.bannerSub;
         document.getElementById("ui_brokerTitle").innerText = d.brokerTitle;
         document.getElementById("ui_disclaimer").innerText = d.disclaimer;
         document.getElementById("addInput").placeholder = d.searchPlaceholder;
@@ -339,7 +316,6 @@
         if(selected) renderDynamicInterpretation();
     }
 
-    // MOTOR EXCLUSIVO DE INTERPRETACIÓN ANALÍTICA CONTEXTUALIZADA EN TIEMPO REAL
     function renderDynamicInterpretation() {
         const d = cache[selected];
         if(!d) return;
@@ -395,16 +371,18 @@
         let tScore = 0; if (rsi < 35 || rsi > 70) tScore += 15; else tScore += 5; if (Math.abs(smaDist) > 5) tScore += 10; else tScore += 4; if (beta > 1.2) tScore += 10; else tScore += 6;
         let sScore = 0; if (relVol > 1.5) sScore += 12; else sScore += 5; if (shortRatio > 4) sScore += 8; else sScore += 4; if (insiderFlow === "Acumulación") sScore += 5;
 
-        return { ticker, name: ticker + " Corp", price: Math.abs((hash % 220) + 25), fwdPE, eps, profitMargin, rsi, smaDist, beta, relVol, shortRatio, insiderFlow, weightedScore: fScore + tScore + sScore };
+        return { ticker, price: Math.abs((hash % 220) + 25), fwdPE, eps, profitMargin, rsi, smaDist, beta, relVol, shortRatio, insiderFlow, weightedScore: fScore + tScore + sScore };
     }
 
     async function dataFetch(ticker) {
         try {
-            const proxy = "https://corsproxy.io/?";
+            // Se utiliza el Proxy AllOrigins para evitar bloqueos de CORS de Yahoo Finance
+            const proxy = "https://api.allorigins.win/get?url=";
             const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=3mo`;
             const res = await fetch(proxy + encodeURIComponent(url));
             if (!res.ok) throw new Error();
-            const json = await res.json();
+            const raw = await res.json();
+            const json = JSON.parse(raw.contents);
             const meta = json.chart.result[0].meta;
             let base = generateAdvancedMetrics(ticker);
             base.price = meta.regularMarketPrice || base.price;
@@ -433,7 +411,12 @@
             row.className = `row-tr ${selected === d.ticker ? 'selected' : ''}`;
             row.addEventListener("click", (e) => { if(!e.target.closest('.action')) { selectAsset(d.ticker); if(window.innerWidth <= 768) switchTab(2); } });
             const actionBtn = isPortfolio ? `<button class="action" onclick="mutate('${d.ticker}', true)">✕</button>` : `<button class="action" style="color:var(--accent);" onclick="mutate('${d.ticker}', false)">＋</button>`;
-            row.innerHTML = `<td><span style="font-weight:700; font-size:11px;">${d.ticker}</span></td><td><span class="cell-val">$${d.price.toFixed(2)}</span></td><td><span class="cell-val" style="color:var(--accent);">${d.weightedScore}/100</span></td><td>${actionBtn}</td>`;
+            
+            let colorClass = "score-low";
+            if(d.weightedScore >= 75) colorClass = "score-high";
+            else if(d.weightedScore >= 45) colorClass = "score-mid";
+
+            row.innerHTML = `<td><span style="font-weight:700; font-size:11px;">${d.ticker}</span></td><td><span class="cell-val">$${d.price.toFixed(2)}</span></td><td><span class="cell-val ${colorClass}">${d.weightedScore}/100</span></td><td>${actionBtn}</td>`;
             container.appendChild(row);
         });
         document.getElementById(isPortfolio ? "countLeft" : "countRight").innerText = pool.length;
@@ -446,72 +429,138 @@
 
     function selectAsset(ticker) {
         selected = ticker;
-        document.querySelectorAll('.row-tr').forEach(r => { r.classList.toggle('selected', r.querySelector('td span').innerText === ticker); });
+        document.querySelectorAll('.row-tr').forEach(r => { 
+            const tdSpan = r.querySelector('td span');
+            if(tdSpan) r.classList.toggle('selected', tdSpan.innerText === ticker); 
+        });
         document.getElementById("activeChart").innerText = ticker; document.getElementById("activeAnalysis").innerText = ticker;
 
         const container = document.getElementById("tvWidget"); container.innerHTML = `<div class="loading">Streaming...</div>`;
         setTimeout(() => { if (typeof TradingView !== 'undefined') { container.innerHTML = ""; new TradingView.widget({ "autosize": true, "symbol": `${ticker}`, "interval": "D", "theme": theme, "style": "1", "hide_side_toolbar": true, "container_id": "tvWidget" }); } }, 100);
 
         const d = cache[ticker] || generateAdvancedMetrics(ticker);
-        document.getElementById("totalScore").innerText = `${d.weightedScore} / 100`;
+        const scoreElement = document.getElementById("totalScore");
+        scoreElement.innerText = `${d.weightedScore} / 100`;
+        
+        const confBadge = document.getElementById("confluenceBadge");
+        const dict = dictionary[lang];
+        confBadge.style.display = "inline-block";
+        
+        scoreElement.className = "score-badge";
+        
+        if (d.weightedScore >= 75) {
+            confBadge.innerText = dict.conf_high;
+            confBadge.className = "confluence-label high";
+            scoreElement.classList.add("score-high");
+        } else if (d.weightedScore >= 45) {
+            confBadge.innerText = dict.conf_mid;
+            confBadge.className = "confluence-label mid";
+            scoreElement.classList.add("score-mid");
+        } else {
+            confBadge.innerText = dict.conf_low;
+            confBadge.className = "confluence-label low";
+            scoreElement.classList.add("score-low");
+        }
+
         document.getElementById("m_pe").innerText = `${d.fwdPE}x`; document.getElementById("m_eps").innerText = `$${d.eps}`; document.getElementById("m_margin").innerText = `${d.profitMargin}%`;
         document.getElementById("m_rsi").innerText = d.rsi; document.getElementById("m_sma").innerText = `${d.smaDist}%`; document.getElementById("m_beta").innerText = d.beta;
         document.getElementById("m_rvol").innerText = `${d.relVol}x`; document.getElementById("m_short").innerText = `${d.shortRatio}%`; document.getElementById("m_insider").innerText = d.insiderFlow;
 
-        // Disparar la interpretación analítica contextualizada
         renderDynamicInterpretation();
 
-        // Enlaces de afiliados limpios con marca Trade Hunter
-        const dict = dictionary[lang];
         const brokersContainer = document.getElementById("brokersContainer");
         brokersContainer.innerHTML = `
             <div class="broker-card">
-                <div class="broker-info"><h5>Pepperstone (STP Architecture)</h5><p>Regulación: FCA, CySEC • Optimized Data Spreads</p></div>
+                <div class="broker-info"><h5>Pepperstone Gateway</h5><p>STP Pricing • Tier-1 Liquidity</p></div>
                 <a href="https://tradehunter.io/gateway?broker=pepperstone" target="_blank" class="broker-action-btn">${dict.brokerBtn}</a>
-            </div>
-            <div class="broker-card" style="border-left-color: #00ff66;">
-                <div class="broker-info"><h5>Interactive Brokers (Direct Access)</h5><p>Regulación: SEC, FINRA • Multi-Asset Institutional</p></div>
-                <a href="https://tradehunter.io/gateway?broker=ibkr" target="_blank" class="broker-action-btn" style="background:#00ff66;">${dict.brokerBtn}</a>
             </div>`;
         document.getElementById("syncTime").innerText = new Date().toTimeString().split(' ')[0];
     }
 
-    const addInput = document.getElementById("addInput"); const sugDropdown = document.getElementById("sugDropdown");
-    addInput.addEventListener("input", async () => {
-        const query = addInput.value.trim().toLowerCase(); sugDropdown.innerHTML = ""; if (!query) { sugDropdown.style.display = "none"; return; }
-        try {
-            const proxy = "https://corsproxy.io/?"; const searchUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&quotesCount=5`;
-            const res = await fetch(proxy + encodeURIComponent(searchUrl)); const json = await res.json();
-            if (json.quotes && json.quotes.length > 0) {
-                json.quotes.forEach(m => {
-                    if (!m.symbol) return; const div = document.createElement("div"); div.className = "sug-item";
-                    div.innerHTML = `${m.symbol} <span>${m.longname || 'Equity'}</span>`;
-                    div.addEventListener("click", () => { const tk = m.symbol.toUpperCase(); addInput.value = tk; sugDropdown.style.display = "none"; if (!suggestions.includes(tk) && !portfolio.includes(tk)) suggestions.push(tk); mutate(tk, false); });
-                    sugDropdown.appendChild(div);
-                }); sugDropdown.style.display = "block";
+    // NUEVO MOTOR DE BUSQUEDA ASÍNCRONO BLINDADO CONTRA CORTES DE CORS
+    const addInput = document.getElementById("addInput"); 
+    const sugDropdown = document.getElementById("sugDropdown");
+    let searchTimeout = null;
+    
+    function appendSuggestionItem(symbol, name) {
+        const div = document.createElement("div");
+        div.className = "sug-item";
+        div.innerHTML = `<b>${symbol}</b> <span>${name}</span>`;
+        div.addEventListener("click", () => {
+            const tk = symbol.toUpperCase();
+            addInput.value = "";
+            sugDropdown.style.display = "none";
+            mutate(tk, false);
+        });
+        sugDropdown.appendChild(div);
+    }
+
+    addInput.addEventListener("input", () => {
+        clearTimeout(searchTimeout);
+        const query = addInput.value.trim().toLowerCase();
+        sugDropdown.innerHTML = "";
+        
+        if (!query) { sugDropdown.style.display = "none"; return; }
+        
+        // Muestra de inmediato coincidencias locales preestablecidas para evitar esperas vacías
+        const localMatches = localFallbackDirectory.filter(c => c.symbol.toLowerCase().includes(query) || c.name.toLowerCase().includes(query));
+        if(localMatches.length > 0) {
+            localMatches.forEach(m => appendSuggestionItem(m.symbol, m.name));
+            sugDropdown.style.display = "block";
+        }
+
+        // Consulta en paralelo a la base de datos de Yahoo a través del proxy robusto AllOrigins
+        searchTimeout = setTimeout(async () => {
+            try {
+                const proxy = "https://api.allorigins.win/get?url=";
+                const url = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&quotesCount=6`;
+                const res = await fetch(proxy + encodeURIComponent(url));
+                if (!res.ok) return;
+                const raw = await res.json();
+                const json = JSON.parse(raw.contents);
+                
+                if (json.quotes && json.quotes.length > 0) {
+                    // Evitamos duplicados limpiando la pre-carga si encontramos datos globales nuevos
+                    sugDropdown.innerHTML = ""; 
+                    json.quotes.forEach(m => {
+                        if (!m.symbol) return;
+                        // Excluir símbolos que contengan caracteres extraños que rompan TradingView
+                        if (m.symbol.includes("=") || m.symbol.includes("^")) return;
+                        
+                        appendSuggestionItem(m.symbol, m.longname || m.shortname || 'Equity Asset');
+                    });
+                    sugDropdown.style.display = "block";
+                }
+            } catch (e) {
+                // En caso de fallo total externo, mantenemos lo que haya en local
+                if (sugDropdown.children.length === 0) sugDropdown.style.display = "none";
             }
-        } catch(e) {}
+        }, 300);
     });
+
     document.addEventListener("click", (e) => { if (!addInput.contains(e.target)) sugDropdown.style.display = "none"; });
 
     function mutate(ticker, remove) {
-        const cleanTicker = ticker.trim().toUpperCase(); if (!cleanTicker) return;
-        if(remove) { portfolio = portfolio.filter(t => t !== cleanTicker); } else { if(!portfolio.includes(cleanTicker)) portfolio.push(cleanTicker); addInput.value = ""; }
-        localStorage.setItem("th_p_items", JSON.stringify(portfolio)); renderLists().then(() => { if(!remove) selectAsset(cleanTicker); });
+        const cleanTicker = ticker.trim().toUpperCase(); 
+        if (!cleanTicker) return;
+        
+        if(remove) { 
+            portfolio = portfolio.filter(t => t !== cleanTicker); 
+        } else { 
+            if(!portfolio.includes(cleanTicker)) portfolio.push(cleanTicker); 
+            addInput.value = ""; 
+        }
+        localStorage.setItem("th_p_items", JSON.stringify(portfolio)); 
+        renderLists().then(() => { if(!remove) selectAsset(cleanTicker); });
     }
-    document.getElementById("btnAdd").addEventListener("click", () => { const tk = addInput.value.trim().toUpperCase(); if(tk) { if(!suggestions.includes(tk)) suggestions.push(tk); mutate(tk, false); } });
 
-    // Alternador de Idiomas Cíclico con refresco estructural instantáneo
     document.getElementById("langToggle").addEventListener("click", () => {
-        if (lang === "es") lang = "en";
-        else if (lang === "en") lang = "pt";
-        else lang = "es";
+        lang = lang === "es" ? "en" : "es";
         localStorage.setItem("th_lang", lang);
         translateUI();
         if(selected) selectAsset(selected);
     });
 
-    // Alternador de Temas Dark/Light
     document.getElementById("themeToggle").addEventListener("click", () => {
         theme = theme === "dark" ? "light" : "dark";
         localStorage.setItem("th_theme", theme);
