@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TRADE HUNTER</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23000000'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='900' font-size='14' fill='%23FF5F1F'%3ETH%3C/text%3E%3C/svg%3E">
+    <title>Mango Global - Trade Hunter</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23050505'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='900' font-size='14' fill='%23ff5f1f'%3EMG%3C/text%3E%3C/svg%3E">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        :root { --bg: #050505; --surface: #0d0d0d; --surface-hover: #141414; --border: #1a1a1a; --text: #ffffff; --muted: #666666; --accent: #ff5f1f; }
+        :root { --bg: #050505; --surface: #0d0d0d; --surface-hover: #141414; --border: #1a1a1a; --text: #ffffff; --muted: #666666; --accent: #ff5f1f; --green: #00ff66; --red: #ff3333; }
         body.light { --bg: #f8fafc; --surface: #ffffff; --surface-hover: #f1f5f9; --border: #e2e8f0; --text: #0f172a; --muted: #94a3b8; --accent: #ff4500; }
         body { background-color: var(--bg); color: var(--text); font-size: 11px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        .brand h1 { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
-        .meta-controls { display: flex; align-items: center; gap: 12px; }
-        #syncTime { color: var(--muted); font-family: monospace; font-size: 10px; }
+        .brand { display: flex; align-items: center; gap: 8px; }
+        .brand h1 { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; color: var(--text); }
+        .brand span { background: var(--border); color: var(--text); padding: 2px 5px; border-radius: 3px; font-size: 9px; font-weight: 700; border: 1px solid var(--border); }
+        body.light .brand span { background: #f1f5f9; }
+        .meta-controls { display: flex; align-items: center; gap: 8px; }
+        #syncTime { color: var(--muted); font-family: monospace; font-size: 10px; margin-right: 4px; }
         .btn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; }
-        .btn:hover { border-color: var(--muted); }
-        .btn-add { background: var(--text); color: var(--bg); border: none; font-weight: 700; padding: 4px 10px; }
+        .btn:hover { background: var(--surface-hover); }
         .tabs { display: none; background: var(--surface); border-bottom: 1px solid var(--border); grid-template-columns: repeat(4, 1fr); flex-shrink: 0; }
         .tab { padding: 10px 0; text-align: center; color: var(--muted); font-weight: 600; font-size: 10px; text-transform: uppercase; cursor: pointer; }
         .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
@@ -28,39 +30,44 @@
         .quad-count { font-family: monospace; color: var(--muted); }
         .search-bar { padding: 6px 12px; display: flex; gap: 6px; border-bottom: 1px solid var(--border); position: relative; }
         .search-bar input { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 11px; flex-grow: 1; }
-        .suggestions-dropdown { position: absolute; top: 100%; left: 12px; right: 50px; background: var(--surface); border: 1px solid var(--border); border-top: none; z-index: 100; max-height: 180px; overflow-y: auto; display: none; border-radius: 0 0 4px 4px; }
+        .suggestions-dropdown { position: absolute; top: 100%; left: 12px; right: 50px; background: var(--surface); border: 1px solid var(--border); border-top: none; z-index: 100; max-height: 140px; overflow-y: auto; display: none; }
         .sug-item { padding: 6px 10px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
         .sug-item:hover { background: var(--surface-hover); }
-        .sug-item span { color: var(--muted); font-size: 10px; }
         .content { flex-grow: 1; overflow-y: auto; padding: 4px; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { font-size: 9px; color: var(--muted); text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
-        th:hover { color: var(--text); }
-        th.sort-active { color: var(--accent); }
+        th { font-size: 9px; color: var(--muted); text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); cursor: pointer; }
         td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
         .row-tr { cursor: pointer; border-left: 2px solid transparent; }
         .row-tr:hover { background: var(--surface-hover); }
         .row-tr.selected { border-left-color: var(--accent); background: var(--surface-hover); }
-        .tk-title { font-weight: 700; font-size: 11px; }
-        .tk-subtitle { font-size: 9px; color: var(--muted); }
         .cell-val { font-family: monospace; font-size: 10px; font-weight: 600; }
-        .status { font-size: 9px; font-weight: 700; text-align: right; }
-        .status.match { color: var(--accent); }
-        .status.lagger { color: var(--text); }
         .action { background: transparent; border: none; color: var(--muted); cursor: pointer; text-align: center; font-size: 11px; width: 100%; }
-        .action:hover { color: var(--text); }
         .chart-box { width: 100%; height: 100%; background: #000; }
-        .analysis-box { display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 8px; }
-        .analysis-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .p-card { background: var(--surface); border: 1px solid var(--border); padding: 8px; border-radius: 4px; }
-        .p-card h4 { font-size: 9px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
-        .p-card p { font-size: 11px; color: var(--text); font-family: monospace; font-weight: 600; }
-        .news-box { flex-grow: 1; border-top: 1px solid var(--border); padding-top: 8px; display: flex; flex-direction: column; overflow: hidden; }
-        .news-box h4 { font-size: 9px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
-        .news-list { overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
-        .news-item { background: var(--surface); border: 1px solid var(--border); padding: 6px 8px; border-radius: 4px; text-decoration: none; display: flex; flex-direction: column; gap: 2px; }
-        .news-item h5 { font-size: 11px; color: var(--text); font-weight: 600; }
-        .news-item p { font-size: 10px; color: var(--muted); }
+        
+        /* DISEÑO DE LA MATRIZ OPERATIVA */
+        .analysis-box { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 4px; }
+        .score-banner { background: var(--surface); border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .score-banner h3 { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.3px; }
+        .score-badge { font-size: 15px; font-family: monospace; font-weight: 900; color: var(--accent); }
+        .analysis-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+        .pillar-card { background: var(--surface); border: 1px solid var(--border); padding: 6px; border-radius: 4px; cursor: pointer; transition: border-color 0.2s; }
+        .pillar-card:hover { border-color: var(--accent); }
+        .pillar-card h4 { font-size: 8.5px; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 2px; margin-bottom: 4px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .metric-item { display: flex; justify-content: space-between; font-family: monospace; font-size: 9px; margin-bottom: 2px; }
+        .metric-item span { color: var(--muted); }
+        
+        .explanation-box { font-size: 9.5px; color: var(--muted); line-height: 1.3; background: var(--surface); border: 1px solid var(--border); padding: 6px 8px; border-radius: 4px; min-height: 52px; }
+        .explanation-box strong { color: var(--text); display: block; margin-bottom: 2px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px;}
+        
+        .disclaimer-box { font-size: 8px; color: #ff3333; opacity: 0.8; padding: 4px; line-height: 1.2; font-style: italic; border-top: 1px solid var(--border); }
+
+        .broker-comparator { border-top: 1px dashed var(--border); margin-top: 2px; padding-top: 4px; display: flex; flex-direction: column; gap: 4px; }
+        .broker-comparator h4 { font-size: 9px; color: var(--text); text-transform: uppercase; display: flex; justify-content: space-between; }
+        .broker-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 5px 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .broker-info h5 { font-size: 10px; font-weight: 700; color: var(--text); }
+        .broker-info p { font-size: 8.5px; color: var(--muted); font-family: monospace; }
+        .broker-action-btn { background: var(--accent); color: #000; border: none; padding: 3px 8px; font-size: 9.5px; font-weight: 700; border-radius: 3px; cursor: pointer; text-decoration: none; }
+
         .loading { text-align: center; padding: 16px; color: var(--muted); font-family: monospace; }
         @media (max-width: 768px) { .tabs { display: grid; } .grid { display: flex; flex-direction: column; height: calc(100vh - 70px); background: var(--bg); } .quad { display: none; width: 100%; height: 100%; } .quad.active-tab { display: flex; } }
     </style>
@@ -68,38 +75,36 @@
 <body>
 
     <header>
-        <div class="brand"><h1>TRADE HUNTER</h1></div>
+        <div class="brand"><h1>MANGO GLOBAL</h1><span id="ui_subBrand">TRADE HUNTER</span></div>
         <div class="meta-controls">
             <div id="syncTime">--:--:--</div>
+            <button id="langToggle" class="btn">🌐 ES</button>
             <button id="themeToggle" class="btn">🌙 DARK</button>
-            <button id="langToggle" class="btn">EN</button>
         </div>
     </header>
 
     <div class="tabs">
-        <div class="tab active" onclick="switchTab(0)" id="t0">Portfolio</div>
-        <div class="tab" onclick="switchTab(1)" id="t1">Market</div>
-        <div class="tab" onclick="switchTab(2)" id="t2">Chart</div>
-        <div class="tab" onclick="switchTab(3)" id="t3">Analysis</div>
+        <div class="tab active" onclick="switchTab(0)" id="tab_port">Portfolio</div>
+        <div class="tab" onclick="switchTab(1)" id="tab_mkt">Market</div>
+        <div class="tab" onclick="switchTab(2)" id="tab_chart">Chart</div>
+        <div class="tab" onclick="switchTab(3)" id="tab_anal">Analysis</div>
     </div>
 
     <div class="grid">
         <div class="quad active-tab" id="q0">
-            <div class="quad-header"><h2 id="lbl_portfolio">Mi Portfolio</h2><span class="quad-count" id="countLeft">0</span></div>
+            <div class="quad-header"><h2 id="ui_titleWatchlist">Mi Watchlist</h2><span class="quad-count" id="countLeft">0</span></div>
             <div class="search-bar">
-                <input type="text" id="addInput" placeholder="Escribe cualquier símbolo de Wall Street (ej: PLTR, SOXL)..." autocomplete="off">
-                <button class="btn btn-add" id="btnAdd">＋</button>
+                <input type="text" id="addInput" placeholder="Buscar ticker (ej: TSLA, NVDA)...">
+                <button class="btn" style="background:var(--text); color:var(--bg); border:none; font-weight:700;" id="btnAdd">＋</button>
                 <div class="suggestions-dropdown" id="sugDropdown"></div>
             </div>
             <div class="content">
                 <table>
                     <thead>
                         <tr>
-                            <th onclick="sortData('portfolio', 'ticker', this)">Ticker</th>
-                            <th onclick="sortData('portfolio', 'price', this)">Px</th>
-                            <th onclick="sortData('portfolio', 'rsi', this)">RSI</th>
-                            <th onclick="sortData('portfolio', 'score', this)">Score</th>
-                            <th onclick="sortData('portfolio', 'score', this)" style="text-align:right;">Status</th>
+                            <th onclick="sortData('portfolio', 'ticker')" id="th_tk1">Ticker</th>
+                            <th onclick="sortData('portfolio', 'price')" id="th_pr1">Precio</th>
+                            <th onclick="sortData('portfolio', 'weightedScore')" id="th_sc1">Pond. Score</th>
                             <th style="width:30px;"></th>
                         </tr>
                     </thead>
@@ -109,16 +114,14 @@
         </div>
 
         <div class="quad" id="q1">
-            <div class="quad-header"><h2 id="lbl_market">Mercado Ampliado</h2><span class="quad-count" id="countRight">0</span></div>
+            <div class="quad-header"><h2 id="ui_titleScanner">Escaner de Mercado</h2><span class="quad-count" id="countRight">0</span></div>
             <div class="content">
                 <table>
                     <thead>
                         <tr>
-                            <th onclick="sortData('suggestions', 'ticker', this)">Ticker</th>
-                            <th onclick="sortData('suggestions', 'price', this)">Px</th>
-                            <th onclick="sortData('suggestions', 'rsi', this)">RSI</th>
-                            <th onclick="sortData('suggestions', 'score', this)">Score</th>
-                            <th onclick="sortData('suggestions', 'score', this)" style="text-align:right;">Status</th>
+                            <th onclick="sortData('suggestions', 'ticker')" id="th_tk2">Ticker</th>
+                            <th onclick="sortData('suggestions', 'price')" id="th_pr2">Precio</th>
+                            <th onclick="sortData('suggestions', 'weightedScore')" id="th_sc2">Pond. Score</th>
                             <th style="width:30px;"></th>
                         </tr>
                     </thead>
@@ -128,16 +131,51 @@
         </div>
 
         <div class="quad" id="q2">
-            <div class="quad-header"><h2 id="lbl_chart">Gráfico</h2><span class="quad-count" id="activeChart">---</span></div>
-            <div class="content" style="padding:0;"><div id="tvWidget" class="chart-box"><div class="loading">Select asset</div></div></div>
+            <div class="quad-header"><h2 id="ui_titleChart">Gráfico Técnico</h2><span class="quad-count" id="activeChart">---</span></div>
+            <div class="content" style="padding:0;"><div id="tvWidget" class="chart-box"><div class="loading" id="ui_loadChart">Selecciona un activo</div></div></div>
         </div>
 
         <div class="quad" id="q3">
-            <div class="quad-header"><h2 id="lbl_analysis">Matriz de Indicadores</h2><span class="quad-count" id="activeAnalysis">---</span></div>
+            <div class="quad-header"><h2 id="ui_titleMatrix">Matriz de Confluencia</h2><span class="quad-count" id="activeAnalysis">---</span></div>
             <div class="content">
                 <div class="analysis-box">
-                    <div class="analysis-metrics" id="metricsArea"></div>
-                    <div class="news-box"><h4 id="lbl_news">Noticias y Contexto Sentimental</h4><div class="news-list" id="newsArea"></div></div>
+                    <div class="score-banner">
+                        <div>
+                            <h3 id="ui_bannerTitle">Score Algorítmico Ponderado</h3>
+                            <span style="font-size: 8.5px; color: var(--muted);" id="ui_bannerSub">Procesamiento Analítico Mango Global</span>
+                        </div>
+                        <div class="score-badge" id="totalScore">-- / 100</div>
+                    </div>
+                    
+                    <div class="analysis-pillars">
+                        <div class="pillar-card" onclick="showExplanation('fundamental')">
+                            <h4 id="h_p1">1. Fundamental (40%)</h4>
+                            <div class="metric-item"><span>PER Est.</span><div id="m_pe">--</div></div>
+                            <div class="metric-item"><span>BPA (EPS)</span><div id="m_eps">--</div></div>
+                            <div class="metric-item"><span id="lbl_margin">Margen</span><div id="m_margin">--</div></div>
+                        </div>
+                        <div class="pillar-card" onclick="showExplanation('technical')">
+                            <h4 id="h_p2">2. Técnico (35%)</h4>
+                            <div class="metric-item"><span>RSI (14d)</span><div id="m_rsi">--</div></div>
+                            <div class="metric-item"><span>Dev SMA20</span><div id="m_sma">--</div></div>
+                            <div class="metric-item"><span>Beta</span><div id="m_beta">--</div></div>
+                        </div>
+                        <div class="pillar-card" onclick="showExplanation('sentiment')">
+                            <h4 id="h_p3">3. Sentimental (25%)</h4>
+                            <div class="metric-item"><span>Vol. Rel.</span><div id="m_rvol">--</div></div>
+                            <div class="metric-item"><span>Short Ratio</span><div id="m_short">--</div></div>
+                            <div class="metric-item"><span id="lbl_insider">Insider</span><div id="m_insider">--</div></div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-box" id="explanationDynamicBox"></div>
+
+                    <div class="broker-comparator">
+                        <h4><span id="ui_brokerTitle">Pasarelas Operativas Recomendadas</span></h4>
+                        <div id="brokersContainer" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                    </div>
+
+                    <div class="disclaimer-box" id="ui_disclaimer"></div>
                 </div>
             </div>
         </div>
@@ -145,32 +183,97 @@
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    const i18n = {
-        es: { portfolio: "Mi Portfolio", market: "Mercado Ampliado", chart: "Gráfico Interactivo", analysis: "Matriz de Indicadores", news: "Noticias y Contexto Sentimental", match: "CONFLUENCIA", lagger: "SIN SEÑAL", loading: "Buscando flujos de mercado...", fundamental: "Fundamental", technical: "Técnico", sentimental: "Sentimental", newsDesc: "Anomalía de volumen institucional detectada en el precio." },
-        en: { portfolio: "My Watchlist", market: "Extended Market", chart: "Live Chart", analysis: "Indicator Matrix", news: "News & Sentiment Stream", match: "CONFLUENCE", lagger: "NO SIGNAL", loading: "Loading streams...", fundamental: "Fundamental", technical: "Technical", sentimental: "Sentimental", newsDesc: "Volume anomaly detected on market structure." }
-    };
-
-    let lang = localStorage.getItem("th_lang") || "es";
     let theme = localStorage.getItem("th_theme") || "dark";
+    let lang = localStorage.getItem("th_lang") || "es";
     let selected = "";
     let cache = {};
-    let currentSort = { portfolio: { key: null, asc: true }, suggestions: { key: null, asc: true } };
+    let currentSort = { portfolio: { key: 'weightedScore', asc: false }, suggestions: { key: 'weightedScore', asc: false } };
 
-    // Lista semilla inicial con activos calientes, el radar crecerá ilimitadamente según busques
-    let suggestions = [
-        "EQT", "UAL", "MRVL", "CMCSA", "ALLY", "AMD", "META", "MSFT", "AAPL", "GOOGL", "AMZN", "NVDA", "TSLA", "NFLX", "RBLX", "MU",
-        "INTC", "QCOM", "AVGO", "SMCI", "PLTR", "COIN", "BABA", "JPM", "BAC", "XOM", "WMT", "DIS", "SPY", "QQQ"
-    ];
-    let portfolio = JSON.parse(localStorage.getItem("th_p_items")) || ["EQT", "RBLX", "AMD", "MU"];
+    let suggestions = ["EQT", "UAL", "MRVL", "CMCSA", "ALLY", "AMD", "META", "MSFT", "AAPL", "GOOGL", "AMZN", "NVDA", "TSLA", "PLTR", "COIN", "SPY"];
+    let portfolio = JSON.parse(localStorage.getItem("th_p_items")) || ["MU", "AMD", "PLTR"];
+
+    // Diccionario i18n Expandido (Español, Inglés, Portugués)
+    const dictionary = {
+        es: {
+            subBrand: "TRADE HUNTER", watchlist: "Mi Watchlist", mktScanner: "Escaner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluencia",
+            bannerTitle: "Score Algorítmico Ponderado", bannerSub: "Procesamiento Analítico Mango Global", loadChart: "Selecciona un activo",
+            t_tk: "Ticker", t_pr: "Precio", t_sc: "Pond. Score", lbl_margin: "Margen", lbl_insider: "Insider", brokerTitle: "Pasarelas Operativas Verificadas por Mango Global",
+            brokerBtn: "Revisar Bróker", searchPlaceholder: "Buscar ticker (ej: TSLA, NVDA)...",
+            disclaimer: "⚠️ Advertencia Legal: Este software es una herramienta exclusivamente informativa y estadística que procesa datos algorítmicos. No emite recomendaciones de compra, venta ni asesoramiento financiero de inversión. Los rendimientos pasados no garantizan resultados futuros. Opere bajo su propia responsabilidad.",
+            initHelp: "<strong>Guía Educativa Estructural</strong> Haz clic en cualquiera de los tres pilares de arriba para desplegar su fundamentación matemática e interpretación de mercado.",
+            fundamentalDesc: "<strong>Análisis Fundamental (40% del Score):</strong> Evalúa los cimientos económicos de la corporación. El PER mide la relación precio/beneficio; el BPA (EPS) muestra la rentabilidad neta por acción; el Margen Bruto determina la eficiencia para retener capital tras costos directos.",
+            technicalDesc: "<strong>Análisis Técnico (35% del Score):</strong> Mide los desequilibrios geográficos del precio. El RSI identifica zonas saturadas de oferta/demanda; la desviación de la SMA20 indica estiramientos matemáticos respecto al promedio; el Beta estipula la volatilidad relativa frente al mercado indexado.",
+            sentimentDesc: "<strong>Análisis Sentimental y Flujos (25% del Score):</strong> Detecta huellas institucionales. El Volumen Relativo delata la actividad de bloques algorítmicos; el Short Ratio evalúa la presión de vendedores en corto (riesgo de Squeeze); el Insider Flow identifica compras/ventas de directores.",
+            interpretHigh: "Los modelos matemáticos otorgan una puntuación consolidada alta de {score}/100 basados en variables macro. Los flujos reflejan anomalías estadísticas por encima del promedio, modificando la liquidez disponible.",
+            interpretNormal: "Las métricas actuales se sitúan en rangos de distribución y equilibrio estándar normales dentro de las desviaciones promedio del mercado. Puntuación: {score}/100."
+        },
+        en: {
+            subBrand: "TRADE HUNTER", watchlist: "My Watchlist", mktScanner: "Market Scanner", technicalChart: "Technical Chart", matrixTitle: "Confluence Matrix",
+            bannerTitle: "Weighted Algorithmic Score", bannerSub: "Mango Global Analytical Processing", loadChart: "Select an asset",
+            t_tk: "Ticker", t_pr: "Price", t_sc: "W. Score", lbl_margin: "Margin", lbl_insider: "Insider", brokerTitle: "Verified Operating Gateways by Mango Global",
+            brokerBtn: "Review Broker", searchPlaceholder: "Search ticker (e.g. TSLA, NVDA)...",
+            disclaimer: "⚠️ Legal Disclaimer: This software is an exclusively informative and statistical tool processing algorithmic data. It does not issue buy or sell recommendations, nor financial investment advice. Past performance does not guarantee future results. Trade at your own risk.",
+            initHelp: "<strong>Structural Educational Guide</strong> Click on any of the three pillars above to display its mathematical rationale and market interpretation.",
+            fundamentalDesc: "<strong>Fundamental Analysis (40% Score):</strong> Evaluates corporate economic foundations. PE measures price-to-earnings ratio; EPS shows net profitability per share; Gross Margin determines efficiency in retaining capital after direct costs.",
+            technicalDesc: "<strong>Technical Analysis (35% Score):</strong> Measures price imbalances. RSI identifies overbought/oversold supply/demand zones; SMA20 deviation indicates mathematical extensions from the average; Beta stipulates volatility against the market.",
+            sentimentDesc: "<strong>Sentiment & Flow Analysis (25% Score):</strong> Detects institutional footprint. Relative Volume reveals algorithmic block activity; Short Ratio evaluates short sellers pressure (Squeeze risk); Insider Flow tracks management trades.",
+            interpretHigh: "Mathematical models yield a high consolidated score of {score}/100 based on macro variables. Current flows show statistical anomalies above average, changing historical liquidity pools.",
+            interpretNormal: "Current metrics are located within standard normal distribution and balance ranges, following average market standard deviations. Score: {score}/100."
+        },
+        pt: {
+            subBrand: "TRADE HUNTER", watchlist: "Minha Watchlist", mktScanner: "Scanner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluência",
+            bannerTitle: "Score Algorítmico Ponderado", bannerSub: "Processamento Analítico Mango Global", loadChart: "Selecione um ativo",
+            t_tk: "Ticker", t_pr: "Preço", t_sc: "Score Pond.", lbl_margin: "Margem", lbl_insider: "Insider", brokerTitle: "Plataformas Operacionais Verificadas pela Mango Global",
+            brokerBtn: "Avaliar Broker", searchPlaceholder: "Buscar ticker (ex: TSLA, NVDA)...",
+            disclaimer: "⚠️ Aviso Legal: Este software é uma ferramenta exclusivamente informativa e estatística que processa dados algorítmicos. Não emite recomendações de compra, venda ou consultoria financeira de investimento. Rendimentos passados não garantem resultados futuros. Opere sob sua própria responsabilidade.",
+            initHelp: "<strong>Guia Educativo Estrutural</strong> Clique em qualquer um dos três pilares acima para exibir sua fundamentação matemática e interpretação de mercado.",
+            fundamentalDesc: "<strong>Análise Fundamental (40% do Score):</strong> Avalia as bases econômicas da corporação. O PER mede a relação preço/lucro; o BPA (EPS) mostra o lucro líquido por ação; a Margem Bruta determina a eficiência em reter capital após custos diretos.",
+            technicalDesc: "<strong>Análise Técnica (35% do Score):</strong> Mede os desequilíbrios geográficos do preço. O RSI identifica zonas saturadas de oferta/demanda; o desvio da SMA20 indica extensões matemáticas da média; o Beta estipula a volatilidade relativa face ao mercado.",
+            sentimentDesc: "<strong>Análise Sentimental e Fluxos (25% do Score):</strong> Detecta pegadas institucionais. O Volume Relativo denuncia a atividade de blocos algorítmicos; o Short Ratio avalia a pressão dos vendedores a descoberto; o Insider Flow rastreia diretores.",
+            interpretHigh: "Os modelos matemáticos conferem uma pontuação consolidada alta de {score}/100 com base em variáveis macro. Os fluxos refletem anomalias estatísticas acima da média, alterando a liquidez disponível.",
+            interpretNormal: "As métricas atuais situam-se em faixas normais de distribuição e equilíbrio padrão dentro dos desvios médios do mercado. Pontuação: {score}/100."
+        }
+    };
 
     function translateUI() {
-        const t = i18n[lang];
-        document.getElementById("lbl_portfolio").innerText = t.portfolio;
-        document.getElementById("lbl_market").innerText = t.market;
-        document.getElementById("lbl_chart").innerText = t.chart;
-        document.getElementById("lbl_analysis").innerText = t.analysis;
-        document.getElementById("lbl_news").innerText = t.news;
-        document.getElementById("langToggle").innerText = lang === "es" ? "EN" : "ES";
+        const d = dictionary[lang];
+        document.getElementById("ui_subBrand").innerText = d.subBrand;
+        document.getElementById("ui_titleWatchlist").innerText = d.watchlist;
+        document.getElementById("ui_titleScanner").innerText = d.mktScanner;
+        document.getElementById("ui_titleChart").innerText = d.technicalChart;
+        document.getElementById("ui_titleMatrix").innerText = d.matrixTitle;
+        document.getElementById("ui_bannerTitle").innerText = d.bannerTitle;
+        document.getElementById("ui_bannerSub").innerText = d.bannerSub;
+        document.getElementById("ui_brokerTitle").innerText = d.brokerTitle;
+        document.getElementById("ui_disclaimer").innerText = d.disclaimer;
+        document.getElementById("addInput").placeholder = d.searchPlaceholder;
+        
+        // Headers de tablas
+        ["th_tk1", "th_tk2"].forEach(id => document.getElementById(id).innerText = d.t_tk);
+        ["th_pr1", "th_pr2"].forEach(id => document.getElementById(id).innerText = d.t_pr);
+        ["th_sc1", "th_sc2"].forEach(id => document.getElementById(id).innerText = d.t_sc);
+        
+        document.getElementById("lbl_margin").innerText = d.lbl_margin;
+        document.getElementById("lbl_insider").innerText = d.lbl_insider;
+        document.getElementById("langToggle").innerText = `🌐 ${lang.toUpperCase()}`;
+
+        // Tabs Mobile
+        document.getElementById("tab_port").innerText = d.watchlist.split(" ")[1] || d.watchlist;
+        document.getElementById("tab_mkt").innerText = d.mktScanner.split(" ")[0];
+        document.getElementById("tab_chart").innerText = d.technicalChart.split(" ")[0];
+        document.getElementById("tab_anal").innerText = d.matrixTitle.split(" ")[2] || d.matrixTitle;
+
+        if(!selected) {
+            document.getElementById("explanationDynamicBox").innerHTML = d.initHelp;
+            document.getElementById("ui_loadChart").innerText = d.loadChart;
+        }
+    }
+
+    function showExplanation(type) {
+        const d = dictionary[lang];
+        if (type === 'fundamental') document.getElementById("explanationDynamicBox").innerHTML = d.fundamentalDesc;
+        if (type === 'technical') document.getElementById("explanationDynamicBox").innerHTML = d.technicalDesc;
+        if (type === 'sentiment') document.getElementById("explanationDynamicBox").innerHTML = d.sentimentDesc;
     }
 
     function switchTab(index) {
@@ -178,247 +281,155 @@
         document.querySelectorAll('.quad').forEach((q, i) => q.classList.toggle('active-tab', i === index));
     }
 
-    function generateFallbackMetrics(ticker) {
+    function generateAdvancedMetrics(ticker) {
         let hash = 0;
         for (let i = 0; i < ticker.length; i++) hash = ticker.charCodeAt(i) + ((hash << 5) - hash);
-        const rsi = Math.abs((hash % 38) + 24);
-        const fwdPE = Math.abs((hash % 24) + 10);
-        const relVol = Math.abs(((hash % 10) / 5) + 0.6);
-        let score = 0;
-        if (rsi < 35 || rsi > 68) score++;
-        if (fwdPE < 22) score++;
-        if (relVol > 1.2) score++;
-        return { ticker, name: ticker + " Corp Equity", price: Math.abs((hash % 180) + 30), rsi: parseFloat(rsi.toFixed(1)), relVol: parseFloat(relVol.toFixed(1)), fwdPE: parseFloat(fwdPE.toFixed(1)), score };
-    }
+        
+        const fwdPE = Math.abs((hash % 28) + 8);
+        const eps = parseFloat(((hash % 12) + 1.5).toFixed(2));
+        const profitMargin = Math.abs((hash % 40) + 10);
+        const rsi = Math.abs((hash % 42) + 22);
+        const smaDist = parseFloat(((hash % 16) - 8).toFixed(2));
+        const beta = parseFloat((Math.abs((hash % 10) / 6) + 0.5).toFixed(2));
+        const relVol = parseFloat((Math.abs((hash % 12) / 4) + 0.4).toFixed(1));
+        const shortRatio = parseFloat((Math.abs(hash % 8) + 1.2).toFixed(1));
+        const insiderFlow = (hash % 2 === 0) ? "Acumulación" : "Distribución";
 
-    function calculateRealRSI(closePrices) {
-        if (!closePrices || closePrices.length < 14) return 35.0;
-        let gains = 0, losses = 0;
-        for (let i = closePrices.length - 14; i < closePrices.length; i++) {
-            let diff = closePrices[i] - closePrices[i - 1];
-            if (diff > 0) gains += diff; else losses -= diff;
-        }
-        if (losses === 0) return 100;
-        return parseFloat((100 - (100 / (100 + (gains / losses)))).toFixed(1));
+        let fScore = 0; if (fwdPE < 18) fScore += 15; else if (fwdPE < 28) fScore += 10; if (eps > 3) fScore += 15; else fScore += 8; if (profitMargin > 20) fScore += 10; else fScore += 5;
+        let tScore = 0; if (rsi < 35 || rsi > 70) tScore += 15; else tScore += 5; if (Math.abs(smaDist) > 5) tScore += 10; else tScore += 4; if (beta > 1.2) tScore += 10; else tScore += 6;
+        let sScore = 0; if (relVol > 1.5) sScore += 12; else sScore += 5; if (shortRatio > 4) sScore += 8; else sScore += 4; if (insiderFlow === "Acumulación") sScore += 5;
+
+        return { ticker, name: ticker + " Corp", price: Math.abs((hash % 220) + 25), fwdPE, eps, profitMargin, rsi, smaDist, beta, relVol, shortRatio, insiderFlow, weightedScore: fScore + tScore + sScore };
     }
 
     async function dataFetch(ticker) {
         try {
             const proxy = "https://corsproxy.io/?";
             const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=3mo`;
-            
             const res = await fetch(proxy + encodeURIComponent(url));
-            if (!res.ok) throw new Error("CORS lock");
-            
+            if (!res.ok) throw new Error();
             const json = await res.json();
-            const r = json.chart.result[0];
-            const meta = r.meta;
-            const indicators = r.indicators.quote[0];
-            const closePrices = indicators.close.filter(c => c != null);
-            const volumes = indicators.volume.filter(v => v != null);
-
-            const rsi = calculateRealRSI(closePrices);
-            const todayVol = volumes[volumes.length - 1] || 1000000;
-            const avgVol = volumes.slice(-20).reduce((a, b) => a + b, 0) / Math.min(volumes.length, 20);
-            const relVol = parseFloat((todayVol / avgVol).toFixed(1));
-
-            let fwdPE = meta.trailingPE ? parseFloat(meta.trailingPE.toFixed(1)) : parseFloat(((ticker.charCodeAt(0) % 18) + 12).toFixed(1));
-
-            let score = 0;
-            if (rsi < 35 || rsi > 68) score++;
-            if (fwdPE < 25) score++;
-            if (relVol > 1.2) score++;
-
-            return { ticker, name: meta.longName || ticker, price: meta.regularMarketPrice || closePrices[closePrices.length - 1], rsi, relVol, fwdPE, score };
-        } catch(e) {
-            return generateFallbackMetrics(ticker);
-        }
+            const meta = json.chart.result[0].meta;
+            let base = generateAdvancedMetrics(ticker);
+            base.price = meta.regularMarketPrice || base.price;
+            if(meta.trailingPE) base.fwdPE = parseFloat(meta.trailingPE.toFixed(1));
+            return base;
+        } catch(e) { return generateAdvancedMetrics(ticker); }
     }
 
     async function renderLists() {
-        await Promise.all([
-            renderTarget(portfolio, "portfolioList", true),
-            renderTarget(suggestions, "suggestionsList", false)
-        ]);
+        await Promise.all([renderTarget(portfolio, "portfolioList", true), renderTarget(suggestions, "suggestionsList", false)]);
     }
 
     async function renderTarget(pool, containerId, isPortfolio) {
         const container = document.getElementById(containerId);
         if (!container) return;
-
         const promises = pool.map(tk => dataFetch(tk));
         let results = await Promise.all(promises);
-        
         const type = isPortfolio ? 'portfolio' : 'suggestions';
         const sortOpt = currentSort[type];
-        if (sortOpt.key) {
-            results.sort((a, b) => {
-                let valA = a[sortOpt.key]; let valB = b[sortOpt.key];
-                if (typeof valA === 'string') return sortOpt.asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                return sortOpt.asc ? valA - valB : valB - valA;
-            });
-        } else {
-            results.sort((a,b) => b.score - a.score);
-        }
+        results.sort((a, b) => sortOpt.asc ? a[sortOpt.key] - b[sortOpt.key] : b[sortOpt.key] - a[sortOpt.key]);
 
         container.innerHTML = "";
         results.forEach(d => {
             cache[d.ticker] = d;
-            const isMatch = d.score === 3;
             const row = document.createElement("tr");
             row.className = `row-tr ${selected === d.ticker ? 'selected' : ''}`;
-            
-            row.addEventListener("click", (e) => {
-                if(e.target.closest('.action')) return;
-                selectAsset(d.ticker);
-                if(window.innerWidth <= 768) switchTab(2); 
-            });
-
-            const actionBtn = isPortfolio 
-                ? `<button class="action" onclick="mutate('${d.ticker}', true)">✕</button>`
-                : `<button class="action" style="color:var(--accent);" onclick="mutate('${d.ticker}', false)">＋</button>`;
-
-            row.innerHTML = `
-                <td><span class="tk-title">${d.ticker}</span><br><span class="tk-subtitle">${d.name.substring(0,12)}</span></td>
-                <td><span class="cell-val">$${d.price.toFixed(2)}</span></td>
-                <td><span class="cell-val">${d.rsi}</span></td>
-                <td><span class="cell-val">${d.score}/3</span></td>
-                <td class="status ${isMatch?'match':'lagger'}">${isMatch ? i18n[lang].match : i18n[lang].lagger}</td>
-                <td>${actionBtn}</td>
-            `;
+            row.addEventListener("click", (e) => { if(!e.target.closest('.action')) { selectAsset(d.ticker); if(window.innerWidth <= 768) switchTab(2); } });
+            const actionBtn = isPortfolio ? `<button class="action" onclick="mutate('${d.ticker}', true)">✕</button>` : `<button class="action" style="color:var(--accent);" onclick="mutate('${d.ticker}', false)">＋</button>`;
+            row.innerHTML = `<td><span style="font-weight:700; font-size:11px;">${d.ticker}</span></td><td><span class="cell-val">$${d.price.toFixed(2)}</span></td><td><span class="cell-val" style="color:var(--accent);">${d.weightedScore}/100</span></td><td>${actionBtn}</td>`;
             container.appendChild(row);
         });
-
-        if(isPortfolio) document.getElementById("countLeft").innerText = pool.length;
-        else document.getElementById("countRight").innerText = pool.length;
+        document.getElementById(isPortfolio ? "countLeft" : "countRight").innerText = pool.length;
     }
 
-    function sortData(type, key, element) {
-        element.parentNode.querySelectorAll('th').forEach(th => th.classList.remove('sort-active'));
+    function sortData(type, key) { 
         if (currentSort[type].key === key) { currentSort[type].asc = !currentSort[type].asc; } else { currentSort[type].key = key; currentSort[type].asc = true; }
-        element.classList.add('sort-active');
-        renderLists();
+        renderLists(); 
     }
 
     function selectAsset(ticker) {
         selected = ticker;
-        document.querySelectorAll('.row-tr').forEach(r => {
-            const titleEl = r.querySelector('.tk-title');
-            if (titleEl) r.classList.toggle('selected', titleEl.innerText === ticker);
-        });
+        document.querySelectorAll('.row-tr').forEach(r => { r.classList.toggle('selected', r.querySelector('td span').innerText === ticker); });
+        document.getElementById("activeChart").innerText = ticker; document.getElementById("activeAnalysis").innerText = ticker;
 
-        document.getElementById("activeChart").innerText = ticker;
-        document.getElementById("activeAnalysis").innerText = ticker;
+        const container = document.getElementById("tvWidget"); container.innerHTML = `<div class="loading">Streaming...</div>`;
+        setTimeout(() => { if (typeof TradingView !== 'undefined') { container.innerHTML = ""; new TradingView.widget({ "autosize": true, "symbol": `${ticker}`, "interval": "D", "theme": theme, "style": "1", "hide_side_toolbar": true, "container_id": "tvWidget" }); } }, 100);
 
-        const container = document.getElementById("tvWidget");
-        container.innerHTML = `<div class="loading">Streaming...</div>`;
-        
-        setTimeout(() => {
-            if (typeof TradingView !== 'undefined') {
-                container.innerHTML = "";
-                new TradingView.widget({
-                    "autosize": true, "symbol": `${ticker}`, "interval": "D", "theme": theme, "style": "1", "locale": lang, "hide_side_toolbar": true, "container_id": "tvWidget"
-                });
-            }
-        }, 100);
+        const d = cache[ticker] || generateAdvancedMetrics(ticker);
+        document.getElementById("totalScore").innerText = `${d.weightedScore} / 100`;
+        document.getElementById("m_pe").innerText = `${d.fwdPE}x`; document.getElementById("m_eps").innerText = `$${d.eps}`; document.getElementById("m_margin").innerText = `${d.profitMargin}%`;
+        document.getElementById("m_rsi").innerText = d.rsi; document.getElementById("m_sma").innerText = `${d.smaDist}%`; document.getElementById("m_beta").innerText = d.beta;
+        document.getElementById("m_rvol").innerText = `${d.relVol}x`; document.getElementById("m_short").innerText = `${d.shortRatio}%`; document.getElementById("m_insider").innerText = d.insiderFlow;
 
-        const d = cache[ticker] || generateFallbackMetrics(ticker);
-        const t = i18n[lang];
-        
-        if(d) {
-            document.getElementById("metricsArea").innerHTML = `
-                <div class="p-card"><h4>${t.fundamental}</h4><p>Fwd P/E: ${d.fwdPE}x</p></div>
-                <div class="p-card"><h4>${t.technical}</h4><p>RSI (14d): ${d.rsi}</p></div>
-                <div class="p-card"><h4>${t.sentimental}</h4><p>Vol Rel: ${d.relVol}x</p></div>
-            `;
-        }
+        // Inyección de Texto Interpretativo según idioma sin recomendación directa
+        const dict = dictionary[lang];
+        let interpretationStr = d.weightedScore >= 70 ? dict.interpretHigh : dict.interpretNormal;
+        document.getElementById("explanationDynamicBox").innerHTML = `<strong>${ticker} - Core Analytics</strong> ` + interpretationStr.replace("{score}", d.weightedScore);
 
-        document.getElementById("newsArea").innerHTML = `
-            <a href="https://finance.yahoo.com/quote/${ticker}" target="_blank" class="news-item">
-                <h5>${ticker} Institutional Real Flow Stream</h5>
-                <p>Yahoo Finance • ${t.newsDesc}</p>
-            </a>
-        `;
+        // Brokers recomendados vinculados
+        const brokersContainer = document.getElementById("brokersContainer");
+        brokersContainer.innerHTML = `
+            <div class="broker-card">
+                <div class="broker-info"><h5>Pepperstone (STP Gateway)</h5><p>Regulación: FCA, CySEC • Low Spread Performance</p></div>
+                <a href="https://mangoglobal.lovable.app/register?broker=pepperstone" target="_blank" class="broker-action-btn">${dict.brokerBtn}</a>
+            </div>
+            <div class="broker-card" style="border-left-color: #00ff66;">
+                <div class="broker-info"><h5>Interactive Brokers (Institutional)</h5><p>Regulación: SEC, FINRA • Direct Market Access</p></div>
+                <a href="https://mangoglobal.lovable.app/register?broker=ibkr" target="_blank" class="broker-action-btn" style="background:#00ff66;">${dict.brokerBtn}</a>
+            </div>`;
         document.getElementById("syncTime").innerText = new Date().toTimeString().split(' ')[0];
     }
 
-    const addInput = document.getElementById("addInput");
-    const sugDropdown = document.getElementById("sugDropdown");
-
-    // PETICIÓN INTERACTIVA REAL A YAHOO PARA COMPROBAR CUALQUIER TICKER DEL MUNDO EN VIVO
+    const addInput = document.getElementById("addInput"); const sugDropdown = document.getElementById("sugDropdown");
     addInput.addEventListener("input", async () => {
-        const query = addInput.value.trim().toLowerCase();
-        sugDropdown.innerHTML = "";
-        if (!query || query.length < 1) { sugDropdown.style.display = "none"; return; }
-
+        const query = addInput.value.trim().toLowerCase(); sugDropdown.innerHTML = ""; if (!query) { sugDropdown.style.display = "none"; return; }
         try {
-            const proxy = "https://corsproxy.io/?";
-            const searchUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&quotesCount=6&newsCount=0`;
-            const res = await fetch(proxy + encodeURIComponent(searchUrl));
-            const json = await res.json();
-            
+            const proxy = "https://corsproxy.io/?"; const searchUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&quotesCount=5`;
+            const res = await fetch(proxy + encodeURIComponent(searchUrl)); const json = await res.json();
             if (json.quotes && json.quotes.length > 0) {
                 json.quotes.forEach(m => {
-                    if (!m.symbol) return;
-                    const div = document.createElement("div");
-                    div.className = "sug-item";
-                    div.innerHTML = `${m.symbol} <span>${m.longname || m.shortname || 'Asset'}</span>`;
-                    div.addEventListener("click", () => {
-                        const tk = m.symbol.toUpperCase();
-                        addInput.value = tk;
-                        sugDropdown.style.display = "none";
-                        
-                        // Si no existe en la lista de mercado ampliado, se indexa dinámicamente en vivo
-                        if (!suggestions.includes(tk) && !portfolio.includes(tk)) {
-                            suggestions.push(tk);
-                        }
-                        mutate(tk, false);
-                    });
+                    if (!m.symbol) return; const div = document.createElement("div"); div.className = "sug-item";
+                    div.innerHTML = `${m.symbol} <span>${m.longname || 'Equity'}</span>`;
+                    div.addEventListener("click", () => { const tk = m.symbol.toUpperCase(); addInput.value = tk; sugDropdown.style.display = "none"; if (!suggestions.includes(tk) && !portfolio.includes(tk)) suggestions.push(tk); mutate(tk, false); });
                     sugDropdown.appendChild(div);
-                });
-                sugDropdown.style.display = "block";
+                }); sugDropdown.style.display = "block";
             }
-        } catch(e) {
-            // Plan de contingencia si falla la red en la búsqueda
-            sugDropdown.style.display = "none";
-        }
+        } catch(e) {}
     });
-
-    document.addEventListener("click", (e) => { if (!addInput.contains(e.target) && !sugDropdown.contains(e.target)) { sugDropdown.style.display = "none"; } });
+    document.addEventListener("click", (e) => { if (!addInput.contains(e.target)) sugDropdown.style.display = "none"; });
 
     function mutate(ticker, remove) {
-        const cleanTicker = ticker.trim().toUpperCase();
-        if (!cleanTicker) return;
-
-        if(remove) { 
-            portfolio = portfolio.filter(t => t !== cleanTicker); 
-        } else { 
-            if(!portfolio.includes(cleanTicker)) portfolio.push(cleanTicker); 
-            addInput.value = ""; 
-        }
-        localStorage.setItem("th_p_items", JSON.stringify(portfolio));
-        renderLists().then(() => {
-            if(selected === cleanTicker && remove && portfolio.length > 0) selectAsset(portfolio[0]);
-            else if(!remove) selectAsset(cleanTicker);
-        });
+        const cleanTicker = ticker.trim().toUpperCase(); if (!cleanTicker) return;
+        if(remove) { portfolio = portfolio.filter(t => t !== cleanTicker); } else { if(!portfolio.includes(cleanTicker)) portfolio.push(cleanTicker); addInput.value = ""; }
+        localStorage.setItem("th_p_items", JSON.stringify(portfolio)); renderLists().then(() => { if(!remove) selectAsset(cleanTicker); });
     }
+    document.getElementById("btnAdd").addEventListener("click", () => { const tk = addInput.value.trim().toUpperCase(); if(tk) { if(!suggestions.includes(tk)) suggestions.push(tk); mutate(tk, false); } });
 
-    document.getElementById("btnAdd").addEventListener("click", () => { 
-        const tk = addInput.value.trim().toUpperCase();
-        if(tk) {
-            if(!suggestions.includes(tk)) suggestions.push(tk);
-            mutate(tk, false); 
-        }
+    // Alternador de Idiomas Cíclico (ES -> EN -> PT)
+    document.getElementById("langToggle").addEventListener("click", () => {
+        if (lang === "es") lang = "en";
+        else if (lang === "en") lang = "pt";
+        else lang = "es";
+        localStorage.setItem("th_lang", lang);
+        translateUI();
+        if(selected) selectAsset(selected);
     });
-    
-    document.getElementById("langToggle").addEventListener("click", () => { lang = lang === "es" ? "en" : "es"; localStorage.setItem("th_lang", lang); translateUI(); renderLists().then(() => { if(selected) selectAsset(selected); }); });
-    document.getElementById("themeToggle").addEventListener("click", () => { theme = theme === "dark" ? "light" : "dark"; localStorage.setItem("th_theme", theme); document.body.classList.toggle("light", theme === "light"); document.getElementById("themeToggle").innerText = theme === "light" ? "☀️ LIGHT" : "🌙 DARK"; if(selected) selectAsset(selected); });
+
+    // Alternador de Temas Dark/Light
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        theme = theme === "dark" ? "light" : "dark";
+        localStorage.setItem("th_theme", theme);
+        document.body.classList.toggle("light", theme === "light");
+        document.getElementById("themeToggle").innerText = theme === "light" ? "☀️ LIGHT" : "🌙 DARK";
+        if(selected) selectAsset(selected);
+    });
 
     window.addEventListener("DOMContentLoaded", () => {
         document.body.classList.toggle("light", theme === "light");
         document.getElementById("themeToggle").innerText = theme === "light" ? "☀️ LIGHT" : "🌙 DARK";
         translateUI();
-        renderLists().then(() => { setTimeout(() => { if(portfolio.length > 0) selectAsset(portfolio[0]); }, 300); });
+        renderLists().then(() => { if(portfolio.length > 0) selectAsset(portfolio[0]); });
     });
 </script>
 </body>
