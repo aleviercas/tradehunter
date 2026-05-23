@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mango Global - Trade Hunter</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23050505'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='900' font-size='14' fill='%23ff5f1f'%3EMG%3C/text%3E%3C/svg%3E">
+    <title>TRADE HUNTER</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23050505'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='900' font-size='14' fill='%23ff5f1f'%3ETH%3C/text%3E%3C/svg%3E">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -13,9 +13,8 @@
         body { background-color: var(--bg); color: var(--text); font-size: 11px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .brand { display: flex; align-items: center; gap: 8px; }
-        .brand h1 { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; color: var(--text); }
-        .brand span { background: var(--border); color: var(--text); padding: 2px 5px; border-radius: 3px; font-size: 9px; font-weight: 700; border: 1px solid var(--border); }
-        body.light .brand span { background: #f1f5f9; }
+        .brand h1 { font-size: 13px; font-weight: 900; letter-spacing: 0.8px; color: var(--text); }
+        .brand span { background: var(--accent); color: #000; padding: 2px 5px; border-radius: 3px; font-size: 8px; font-weight: 900; letter-spacing: 0.3px; }
         .meta-controls { display: flex; align-items: center; gap: 8px; }
         #syncTime { color: var(--muted); font-family: monospace; font-size: 10px; margin-right: 4px; }
         .btn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; }
@@ -51,13 +50,14 @@
         .score-badge { font-size: 15px; font-family: monospace; font-weight: 900; color: var(--accent); }
         .analysis-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
         .pillar-card { background: var(--surface); border: 1px solid var(--border); padding: 6px; border-radius: 4px; cursor: pointer; transition: border-color 0.2s; }
-        .pillar-card:hover { border-color: var(--accent); }
+        .pillar-card:hover, .pillar-card.active-pillar { border-color: var(--accent); }
         .pillar-card h4 { font-size: 8.5px; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 2px; margin-bottom: 4px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .metric-item { display: flex; justify-content: space-between; font-family: monospace; font-size: 9px; margin-bottom: 2px; }
         .metric-item span { color: var(--muted); }
         
-        .explanation-box { font-size: 9.5px; color: var(--muted); line-height: 1.3; background: var(--surface); border: 1px solid var(--border); padding: 6px 8px; border-radius: 4px; min-height: 52px; }
-        .explanation-box strong { color: var(--text); display: block; margin-bottom: 2px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px;}
+        .explanation-box { font-size: 9.5px; color: var(--muted); line-height: 1.35; background: var(--surface); border: 1px solid var(--border); padding: 6px 8px; border-radius: 4px; min-height: 75px; }
+        .explanation-box strong { color: var(--text); display: block; margin-bottom: 3px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px;}
+        .interpretation-badge { display: inline-block; padding: 2px 4px; border-radius: 2px; font-size: 8.5px; font-weight: 700; margin-top: 4px; font-family: monospace; text-transform: uppercase; }
         
         .disclaimer-box { font-size: 8px; color: #ff3333; opacity: 0.8; padding: 4px; line-height: 1.2; font-style: italic; border-top: 1px solid var(--border); }
 
@@ -75,7 +75,7 @@
 <body>
 
     <header>
-        <div class="brand"><h1>MANGO GLOBAL</h1><span id="ui_subBrand">TRADE HUNTER</span></div>
+        <div class="brand"><h1>TRADE HUNTER</h1><span id="ui_subBrand">ANALYTICS</span></div>
         <div class="meta-controls">
             <div id="syncTime">--:--:--</div>
             <button id="langToggle" class="btn">🌐 ES</button>
@@ -84,8 +84,8 @@
     </header>
 
     <div class="tabs">
-        <div class="tab active" onclick="switchTab(0)" id="tab_port">Portfolio</div>
-        <div class="tab" onclick="switchTab(1)" id="tab_mkt">Market</div>
+        <div class="tab active" onclick="switchTab(0)" id="tab_port">Watchlist</div>
+        <div class="tab" onclick="switchTab(1)" id="tab_mkt">Scanner</div>
         <div class="tab" onclick="switchTab(2)" id="tab_chart">Chart</div>
         <div class="tab" onclick="switchTab(3)" id="tab_anal">Analysis</div>
     </div>
@@ -142,25 +142,25 @@
                     <div class="score-banner">
                         <div>
                             <h3 id="ui_bannerTitle">Score Algorítmico Ponderado</h3>
-                            <span style="font-size: 8.5px; color: var(--muted);" id="ui_bannerSub">Procesamiento Analítico Mango Global</span>
+                            <span style="font-size: 8.5px; color: var(--muted);" id="ui_bannerSub">Procesamiento Analítico de Datos</span>
                         </div>
                         <div class="score-badge" id="totalScore">-- / 100</div>
                     </div>
                     
                     <div class="analysis-pillars">
-                        <div class="pillar-card" onclick="showExplanation('fundamental')">
+                        <div class="pillar-card" id="p_fundamental" onclick="selectPillar('fundamental')">
                             <h4 id="h_p1">1. Fundamental (40%)</h4>
                             <div class="metric-item"><span>PER Est.</span><div id="m_pe">--</div></div>
                             <div class="metric-item"><span>BPA (EPS)</span><div id="m_eps">--</div></div>
                             <div class="metric-item"><span id="lbl_margin">Margen</span><div id="m_margin">--</div></div>
                         </div>
-                        <div class="pillar-card" onclick="showExplanation('technical')">
+                        <div class="pillar-card" id="p_technical" onclick="selectPillar('technical')">
                             <h4 id="h_p2">2. Técnico (35%)</h4>
                             <div class="metric-item"><span>RSI (14d)</span><div id="m_rsi">--</div></div>
                             <div class="metric-item"><span>Dev SMA20</span><div id="m_sma">--</div></div>
                             <div class="metric-item"><span>Beta</span><div id="m_beta">--</div></div>
                         </div>
-                        <div class="pillar-card" onclick="showExplanation('sentiment')">
+                        <div class="pillar-card" id="p_sentiment" onclick="selectPillar('sentiment')">
                             <h4 id="h_p3">3. Sentimental (25%)</h4>
                             <div class="metric-item"><span>Vol. Rel.</span><div id="m_rvol">--</div></div>
                             <div class="metric-item"><span>Short Ratio</span><div id="m_short">--</div></div>
@@ -186,52 +186,117 @@
     let theme = localStorage.getItem("th_theme") || "dark";
     let lang = localStorage.getItem("th_lang") || "es";
     let selected = "";
+    let activePillar = "fundamental"; 
     let cache = {};
     let currentSort = { portfolio: { key: 'weightedScore', asc: false }, suggestions: { key: 'weightedScore', asc: false } };
 
     let suggestions = ["EQT", "UAL", "MRVL", "CMCSA", "ALLY", "AMD", "META", "MSFT", "AAPL", "GOOGL", "AMZN", "NVDA", "TSLA", "PLTR", "COIN", "SPY"];
     let portfolio = JSON.parse(localStorage.getItem("th_p_items")) || ["MU", "AMD", "PLTR"];
 
-    // Diccionario i18n Expandido (Español, Inglés, Portugués)
     const dictionary = {
         es: {
-            subBrand: "TRADE HUNTER", watchlist: "Mi Watchlist", mktScanner: "Escaner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluencia",
-            bannerTitle: "Score Algorítmico Ponderado", bannerSub: "Procesamiento Analítico Mango Global", loadChart: "Selecciona un activo",
-            t_tk: "Ticker", t_pr: "Precio", t_sc: "Pond. Score", lbl_margin: "Margen", lbl_insider: "Insider", brokerTitle: "Pasarelas Operativas Verificadas por Mango Global",
+            subBrand: "ANALYTICS", watchlist: "Mi Watchlist", mktScanner: "Escaner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluencia",
+            bannerTitle: "Score Algorítmico Ponderado", bannerSub: "Procesamiento de Ratios Estadísticos", loadChart: "Selecciona un activo",
+            t_tk: "Ticker", t_pr: "Precio", t_sc: "Pond. Score", lbl_margin: "Margen", lbl_insider: "Insider", brokerTitle: "Estructuras de Corretaje Compatibles",
             brokerBtn: "Revisar Bróker", searchPlaceholder: "Buscar ticker (ej: TSLA, NVDA)...",
-            disclaimer: "⚠️ Advertencia Legal: Este software es una herramienta exclusivamente informativa y estadística que procesa datos algorítmicos. No emite recomendaciones de compra, venta ni asesoramiento financiero de inversión. Los rendimientos pasados no garantizan resultados futuros. Opere bajo su propia responsabilidad.",
-            initHelp: "<strong>Guía Educativa Estructural</strong> Haz clic en cualquiera de los tres pilares de arriba para desplegar su fundamentación matemática e interpretación de mercado.",
-            fundamentalDesc: "<strong>Análisis Fundamental (40% del Score):</strong> Evalúa los cimientos económicos de la corporación. El PER mide la relación precio/beneficio; el BPA (EPS) muestra la rentabilidad neta por acción; el Margen Bruto determina la eficiencia para retener capital tras costos directos.",
-            technicalDesc: "<strong>Análisis Técnico (35% del Score):</strong> Mide los desequilibrios geográficos del precio. El RSI identifica zonas saturadas de oferta/demanda; la desviación de la SMA20 indica estiramientos matemáticos respecto al promedio; el Beta estipula la volatilidad relativa frente al mercado indexado.",
-            sentimentDesc: "<strong>Análisis Sentimental y Flujos (25% del Score):</strong> Detecta huellas institucionales. El Volumen Relativo delata la actividad de bloques algorítmicos; el Short Ratio evalúa la presión de vendedores en corto (riesgo de Squeeze); el Insider Flow identifica compras/ventas de directores.",
-            interpretHigh: "Los modelos matemáticos otorgan una puntuación consolidada alta de {score}/100 basados en variables macro. Los flujos reflejan anomalías estadísticas por encima del promedio, modificando la liquidez disponible.",
-            interpretNormal: "Las métricas actuales se sitúan en rangos de distribución y equilibrio estándar normales dentro de las desviaciones promedio del mercado. Puntuación: {score}/100."
+            disclaimer: "⚠️ Advertencia de Datos: Esta plataforma procesa métricas matemáticas agregadas y flujos de información computada. No provee, bajo ninguna circunstancia, asesoramiento financiero, gestión de carteras ni recomendaciones explícitas o implícitas de inversión o compra.",
+            initHelp: "<strong>Guía de Análisis Estadístico</strong> Selecciona un activo de tu lista para procesar las lecturas matriciales complejas en tiempo real.",
+            
+            // Títulos de explicaciones dinámicas
+            title_f: "Evaluación Estructural Fundamental",
+            title_t: "Análisis Cuantitativo Técnico",
+            title_s: "Muestreo del Sentimiento de Flujos",
+
+            // Estados de interpretación analítica contextualizada
+            pe_high: "El PER estimado de {val}x denota múltiplos premium de valoración de mercado corporativo.",
+            pe_low: "El múltiplo PER de {val}x se sitúa en rangos de valoración comprimida respecto a pares sectoriales.",
+            eps_high: "El beneficio por acción (EPS) de ${val} sostiene la base orgánica de la estructura financiera.",
+            eps_low: "Ratios de EPS en ${val} reflejan una etapa de estrechez en márgenes o reinversión masiva de capital.",
+            margin_high: "El margen operativo del {val}% confirma retención eficiente y ventajas competitivas robustas.",
+            margin_low: "Márgenes del {val}% sugieren sensibilidad elevada a costos directos y volatilidad de operación.",
+            
+            rsi_overbought: "El oscilador RSI (14d) se localiza en {val}, un extremo estadístico de sobreextensión alcista.",
+            rsi_oversold: "Lectura de RSI en {val} determina condiciones maduras de sobreventa o capitulación técnica.",
+            rsi_neutral: "El oscilador se equilibra en {val}, mostrando una distribución neutral de la fuerza del precio.",
+            sma_high: "Desviación del {val}% sobre la SMA20; el precio opera en rangos de extensión climática.",
+            sma_low: "El precio se sitúa {val}% debajo de la SMA20, denotando un descuento estadístico de corto plazo.",
+            beta_high: "El coeficiente Beta de {val} advierte una sensibilidad y volatilidad superior al índice ponderado.",
+            beta_low: "Un Beta defensivo de {val} indica una correlación amortiguada y menor riesgo sistemático.",
+            
+            rvol_high: "Pico de volumen relativo en {val}x confirma la participación activa de bloques algorítmicos institucionales.",
+            rvol_low: "Transacciones en {val}x reflejan baja participación institucional y un libro de órdenes ralentizado.",
+            short_high: "Un Short Ratio elevado del {val}% incrementa la probabilidad matemática de un Short Squeeze por cobertura.",
+            short_low: "Nivel de cortos controlado en {val}%, sin presiones asimétricas latentes por el lado vendedor.",
+            insider_acc: "El flujo interno corporativo detecta actividad clasificada como Acumulación de posiciones.",
+            insider_dist: "El flujo insider registra patrones de Distribución o liquidación ordinaria de acciones."
         },
         en: {
-            subBrand: "TRADE HUNTER", watchlist: "My Watchlist", mktScanner: "Market Scanner", technicalChart: "Technical Chart", matrixTitle: "Confluence Matrix",
-            bannerTitle: "Weighted Algorithmic Score", bannerSub: "Mango Global Analytical Processing", loadChart: "Select an asset",
-            t_tk: "Ticker", t_pr: "Price", t_sc: "W. Score", lbl_margin: "Margin", lbl_insider: "Insider", brokerTitle: "Verified Operating Gateways by Mango Global",
+            subBrand: "ANALYTICS", watchlist: "My Watchlist", mktScanner: "Market Scanner", technicalChart: "Technical Chart", matrixTitle: "Confluence Matrix",
+            bannerTitle: "Weighted Algorithmic Score", bannerSub: "Statistical Ratio Processing", loadChart: "Select an asset",
+            t_tk: "Ticker", t_pr: "Price", t_sc: "W. Score", lbl_margin: "Margin", lbl_insider: "Insider", brokerTitle: "Compatible Brokerage Frameworks",
             brokerBtn: "Review Broker", searchPlaceholder: "Search ticker (e.g. TSLA, NVDA)...",
-            disclaimer: "⚠️ Legal Disclaimer: This software is an exclusively informative and statistical tool processing algorithmic data. It does not issue buy or sell recommendations, nor financial investment advice. Past performance does not guarantee future results. Trade at your own risk.",
-            initHelp: "<strong>Structural Educational Guide</strong> Click on any of the three pillars above to display its mathematical rationale and market interpretation.",
-            fundamentalDesc: "<strong>Fundamental Analysis (40% Score):</strong> Evaluates corporate economic foundations. PE measures price-to-earnings ratio; EPS shows net profitability per share; Gross Margin determines efficiency in retaining capital after direct costs.",
-            technicalDesc: "<strong>Technical Analysis (35% Score):</strong> Measures price imbalances. RSI identifies overbought/oversold supply/demand zones; SMA20 deviation indicates mathematical extensions from the average; Beta stipulates volatility against the market.",
-            sentimentDesc: "<strong>Sentiment & Flow Analysis (25% Score):</strong> Detects institutional footprint. Relative Volume reveals algorithmic block activity; Short Ratio evaluates short sellers pressure (Squeeze risk); Insider Flow tracks management trades.",
-            interpretHigh: "Mathematical models yield a high consolidated score of {score}/100 based on macro variables. Current flows show statistical anomalies above average, changing historical liquidity pools.",
-            interpretNormal: "Current metrics are located within standard normal distribution and balance ranges, following average market standard deviations. Score: {score}/100."
+            disclaimer: "⚠️ Data Disclaimer: This platform processes aggregated mathematical metrics and computer data flows. It does not provide, under any circumstances, financial advice, portfolio management, or explicit/implicit investment or buy recommendations.",
+            initHelp: "<strong>Statistical Analysis Guide</strong> Select an asset from your watchlist to process complex matrix reads in real time.",
+            
+            title_f: "Fundamental Structural Evaluation",
+            title_t: "Technical Quantitative Analysis",
+            title_s: "Flow Sentiment Sampling",
+
+            pe_high: "Estimated PE of {val}x denotes premium valuation multiples in the corporate marketplace.",
+            pe_low: "The PE multiple of {val}x sits in compressed valuation ranges relative to sector peers.",
+            eps_high: "Earnings per share (EPS) of ${val} bolsters the organic base of the financial structure.",
+            eps_low: "EPS ratios at ${val} reflect a phase of tight margins or heavy capital reinvestment.",
+            margin_high: "Operating margin at {val}% confirms efficient retention and robust competitive advantages.",
+            margin_low: "Margins at {val}% suggest high sensitivity to direct costs and operating volatility.",
+            
+            rsi_overbought: "The RSI (14d) oscillator stands at {val}, a statistical extreme of bullish overextension.",
+            rsi_oversold: "RSI reading at {val} determines mature conditions of oversold territory or technical capitulation.",
+            rsi_neutral: "The oscillator balances at {val}, showing a neutral distribution of price strength.",
+            sma_high: "Deviation of {val}% above SMA20; price operates in climatic extension ranges.",
+            sma_low: "Price sits {val}% below SMA20, denoting a short-term statistical discount.",
+            beta_high: "Beta coefficient of {val} warns of sensitivity and volatility exceeding the benchmark index.",
+            beta_low: "A defensive Beta of {val} indicates cushioned correlation and lower systematic risk.",
+            
+            rvol_high: "Relative volume spike at {val}x confirms active participation of institutional algorithmic blocks.",
+            rvol_low: "Transactions at {val}x reflect low institutional participation and a slow order book.",
+            short_high: "A high Short Ratio of {val}% increases the mathematical probability of a Short Squeeze due to covering.",
+            short_low: "Short level controlled at {val}%, with no latent asymmetrical selling pressures.",
+            insider_acc: "Corporate internal flow detects activity classified as Position Accumulation.",
+            insider_dist: "Insider flow records patterns of ordinary Share Distribution or liquidation."
         },
         pt: {
-            subBrand: "TRADE HUNTER", watchlist: "Minha Watchlist", mktScanner: "Scanner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluência",
-            bannerTitle: "Score Algorítmico Ponderado", bannerSub: "Processamento Analítico Mango Global", loadChart: "Selecione um ativo",
-            t_tk: "Ticker", t_pr: "Preço", t_sc: "Score Pond.", lbl_margin: "Margem", lbl_insider: "Insider", brokerTitle: "Plataformas Operacionais Verificadas pela Mango Global",
+            subBrand: "ANALYTICS", watchlist: "Minha Watchlist", mktScanner: "Scanner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluência",
+            bannerTitle: "Score Algorítmico Ponderado", bannerSub: "Processamento de Rácios Estatísticos", loadChart: "Selecione um ativo",
+            t_tk: "Ticker", t_pr: "Preço", t_sc: "Score Pond.", lbl_margin: "Margem", lbl_insider: "Insider", brokerTitle: "Estruturas de Corretagem Compatíveis",
             brokerBtn: "Avaliar Broker", searchPlaceholder: "Buscar ticker (ex: TSLA, NVDA)...",
-            disclaimer: "⚠️ Aviso Legal: Este software é uma ferramenta exclusivamente informativa e estatística que processa dados algorítmicos. Não emite recomendações de compra, venda ou consultoria financeira de investimento. Rendimentos passados não garantem resultados futuros. Opere sob sua própria responsabilidade.",
-            initHelp: "<strong>Guia Educativo Estrutural</strong> Clique em qualquer um dos três pilares acima para exibir sua fundamentação matemática e interpretação de mercado.",
-            fundamentalDesc: "<strong>Análise Fundamental (40% do Score):</strong> Avalia as bases econômicas da corporação. O PER mede a relação preço/lucro; o BPA (EPS) mostra o lucro líquido por ação; a Margem Bruta determina a eficiência em reter capital após custos diretos.",
-            technicalDesc: "<strong>Análise Técnica (35% do Score):</strong> Mede os desequilíbrios geográficos do preço. O RSI identifica zonas saturadas de oferta/demanda; o desvio da SMA20 indica extensões matemáticas da média; o Beta estipula a volatilidade relativa face ao mercado.",
-            sentimentDesc: "<strong>Análise Sentimental e Fluxos (25% do Score):</strong> Detecta pegadas institucionais. O Volume Relativo denuncia a atividade de blocos algorítmicos; o Short Ratio avalia a pressão dos vendedores a descoberto; o Insider Flow rastreia diretores.",
-            interpretHigh: "Os modelos matemáticos conferem uma pontuação consolidada alta de {score}/100 com base em variáveis macro. Os fluxos refletem anomalias estatísticas acima da média, alterando a liquidez disponível.",
-            interpretNormal: "As métricas atuais situam-se em faixas normais de distribuição e equilíbrio padrão dentro dos desvios médios do mercado. Pontuação: {score}/100."
+            disclaimer: "⚠️ Aviso de Dados: Esta plataforma processa métricas matemáticas agregadas e fluxos de dados computados. Não fornece, sob nenhuma circunstância, consultoria financeira, gestão de carteiras ou recomendações explícitas ou implícitas de investimento ou compra.",
+            initHelp: "<strong>Guia de Análise Estatística</strong> Selecione um ativo da sua lista para processar as leituras matriciais complexas em tempo real.",
+            
+            title_f: "Avaliação Estrutural Fundamental",
+            title_t: "Análise Quantitativa Técnica",
+            title_s: "Amostragem de Sentimento de Fluxo",
+
+            pe_high: "O PER estimado de {val}x denota múltiplos premium de avaliação no mercado corporativo.",
+            pe_low: "O múltiplo PER de {val}x situa-se em faixas de avaliação comprimidas em relação aos pares do setor.",
+            eps_high: "O lucro por ação (EPS) de ${val} sustenta a base orgânica da estrutura financeira.",
+            eps_low: "Os rácios de EPS em ${val} refletem uma fase de margens apertadas ou reinvestimento massivo de capital.",
+            margin_high: "A margem operacional de {val}% confirma retenção eficiente e vantagens competitivas robustas.",
+            margin_low: "Margens de {val}% sugerem alta sensibilidade aos custos diretos e volatilidade operacional.",
+            
+            rsi_overbought: "O oscilador RSI (14d) está em {val}, um extremo estatístico de sobreextensão altista.",
+            rsi_oversold: "A leitura do RSI em {val} determina condições maduras de sobrevenda ou capitulação técnica.",
+            rsi_neutral: "O oscilador equilibra-se em {val}, mostrando uma distribuição neutra da força dos preços.",
+            sma_high: "Desvio de {val}% acima da SMA20; o preço opera em faixas de extensão climática.",
+            sma_low: "O preço está {val}% abaixo da SMA20, denotando um desconto estatístico de curto prazo.",
+            beta_high: "O coeficiente Beta de {val} alerta para uma sensibilidade e volatilidade superiores ao índice de referência.",
+            beta_low: "Um Beta defensivo de {val} indica uma correlação amortecida e menor risco sistemático.",
+            
+            rvol_high: "O pico de volume relativo em {val}x confirma a participação ativa de blocos algorítmicos institucionais.",
+            rvol_low: "As transações em {val}x refletem baixa participação institucional e um livro de ordens lento.",
+            short_high: "Um Short Ratio elevado de {val}% aumenta a probabilidade matemática de um Short Squeeze devido à cobertura.",
+            short_low: "Nível de posições vendidas controlado em {val}%, sem pressões de venda assimétricas latentes.",
+            insider_acc: "O fluxo interno corporativo deteta atividade classificada como Acumulação de posições.",
+            insider_dist: "O fluxo de insiders regista padrões de Distribuição ou liquidação ordinária de ações."
         }
     };
 
@@ -248,7 +313,6 @@
         document.getElementById("ui_disclaimer").innerText = d.disclaimer;
         document.getElementById("addInput").placeholder = d.searchPlaceholder;
         
-        // Headers de tablas
         ["th_tk1", "th_tk2"].forEach(id => document.getElementById(id).innerText = d.t_tk);
         ["th_pr1", "th_pr2"].forEach(id => document.getElementById(id).innerText = d.t_pr);
         ["th_sc1", "th_sc2"].forEach(id => document.getElementById(id).innerText = d.t_sc);
@@ -257,7 +321,6 @@
         document.getElementById("lbl_insider").innerText = d.lbl_insider;
         document.getElementById("langToggle").innerText = `🌐 ${lang.toUpperCase()}`;
 
-        // Tabs Mobile
         document.getElementById("tab_port").innerText = d.watchlist.split(" ")[1] || d.watchlist;
         document.getElementById("tab_mkt").innerText = d.mktScanner.split(" ")[0];
         document.getElementById("tab_chart").innerText = d.technicalChart.split(" ")[0];
@@ -269,11 +332,44 @@
         }
     }
 
-    function showExplanation(type) {
-        const d = dictionary[lang];
-        if (type === 'fundamental') document.getElementById("explanationDynamicBox").innerHTML = d.fundamentalDesc;
-        if (type === 'technical') document.getElementById("explanationDynamicBox").innerHTML = d.technicalDesc;
-        if (type === 'sentiment') document.getElementById("explanationDynamicBox").innerHTML = d.sentimentDesc;
+    function selectPillar(pillarName) {
+        activePillar = pillarName;
+        document.querySelectorAll('.pillar-card').forEach(card => card.classList.remove('active-pillar'));
+        document.getElementById(`p_${pillarName}`).classList.add('active-pillar');
+        if(selected) renderDynamicInterpretation();
+    }
+
+    // MOTOR EXCLUSIVO DE INTERPRETACIÓN ANALÍTICA CONTEXTUALIZADA EN TIEMPO REAL
+    function renderDynamicInterpretation() {
+        const d = cache[selected];
+        if(!d) return;
+        const dict = dictionary[lang];
+        let htmlContent = "";
+
+        if (activePillar === "fundamental") {
+            htmlContent = `<strong>${dict.title_f} - ${selected}</strong>`;
+            htmlContent += `<p>• ${d.fwdPE > 20 ? dict.pe_high.replace("{val}", d.fwdPE) : dict.pe_low.replace("{val}", d.fwdPE)}</p>`;
+            htmlContent += `<p>• ${d.eps > 2.5 ? dict.eps_high.replace("{val}", d.eps) : dict.eps_low.replace("{val}", d.eps)}</p>`;
+            htmlContent += `<p>• ${d.profitMargin > 18 ? dict.margin_high.replace("{val}", d.profitMargin) : dict.margin_low.replace("{val}", d.profitMargin)}</p>`;
+        } 
+        else if (activePillar === "technical") {
+            htmlContent = `<strong>${dict.title_t} - ${selected}</strong>`;
+            let rsiInterpret = dict.rsi_neutral.replace("{val}", d.rsi);
+            if(d.rsi >= 65) rsiInterpret = dict.rsi_overbought.replace("{val}", d.rsi);
+            if(d.rsi <= 35) rsiInterpret = dict.rsi_oversold.replace("{val}", d.rsi);
+            
+            htmlContent += `<p>• ${rsiInterpret}</p>`;
+            htmlContent += `<p>• ${d.smaDist >= 0 ? dict.sma_high.replace("{val}", d.smaDist) : dict.sma_low.replace("{val}", Math.abs(d.smaDist))}</p>`;
+            htmlContent += `<p>• ${d.beta > 1.1 ? dict.beta_high.replace("{val}", d.beta) : dict.beta_low.replace("{val}", d.beta)}</p>`;
+        } 
+        else if (activePillar === "sentiment") {
+            htmlContent = `<strong>${dict.title_s} - ${selected}</strong>`;
+            htmlContent += `<p>• ${d.relVol > 1.2 ? dict.rvol_high.replace("{val}", d.relVol) : dict.rvol_low.replace("{val}", d.relVol)}</p>`;
+            htmlContent += `<p>• ${d.shortRatio > 4.5 ? dict.short_high.replace("{val}", d.shortRatio) : dict.short_low.replace("{val}", d.shortRatio)}</p>`;
+            htmlContent += `<p>• ${d.insiderFlow === "Acumulación" ? dict.insider_acc : dict.insider_dist}</p>`;
+        }
+
+        document.getElementById("explanationDynamicBox").innerHTML = htmlContent;
     }
 
     function switchTab(index) {
@@ -362,21 +458,20 @@
         document.getElementById("m_rsi").innerText = d.rsi; document.getElementById("m_sma").innerText = `${d.smaDist}%`; document.getElementById("m_beta").innerText = d.beta;
         document.getElementById("m_rvol").innerText = `${d.relVol}x`; document.getElementById("m_short").innerText = `${d.shortRatio}%`; document.getElementById("m_insider").innerText = d.insiderFlow;
 
-        // Inyección de Texto Interpretativo según idioma sin recomendación directa
-        const dict = dictionary[lang];
-        let interpretationStr = d.weightedScore >= 70 ? dict.interpretHigh : dict.interpretNormal;
-        document.getElementById("explanationDynamicBox").innerHTML = `<strong>${ticker} - Core Analytics</strong> ` + interpretationStr.replace("{score}", d.weightedScore);
+        // Disparar la interpretación analítica contextualizada
+        renderDynamicInterpretation();
 
-        // Brokers recomendados vinculados
+        // Enlaces de afiliados limpios con marca Trade Hunter
+        const dict = dictionary[lang];
         const brokersContainer = document.getElementById("brokersContainer");
         brokersContainer.innerHTML = `
             <div class="broker-card">
-                <div class="broker-info"><h5>Pepperstone (STP Gateway)</h5><p>Regulación: FCA, CySEC • Low Spread Performance</p></div>
-                <a href="https://mangoglobal.lovable.app/register?broker=pepperstone" target="_blank" class="broker-action-btn">${dict.brokerBtn}</a>
+                <div class="broker-info"><h5>Pepperstone (STP Architecture)</h5><p>Regulación: FCA, CySEC • Optimized Data Spreads</p></div>
+                <a href="https://tradehunter.io/gateway?broker=pepperstone" target="_blank" class="broker-action-btn">${dict.brokerBtn}</a>
             </div>
             <div class="broker-card" style="border-left-color: #00ff66;">
-                <div class="broker-info"><h5>Interactive Brokers (Institutional)</h5><p>Regulación: SEC, FINRA • Direct Market Access</p></div>
-                <a href="https://mangoglobal.lovable.app/register?broker=ibkr" target="_blank" class="broker-action-btn" style="background:#00ff66;">${dict.brokerBtn}</a>
+                <div class="broker-info"><h5>Interactive Brokers (Direct Access)</h5><p>Regulación: SEC, FINRA • Multi-Asset Institutional</p></div>
+                <a href="https://tradehunter.io/gateway?broker=ibkr" target="_blank" class="broker-action-btn" style="background:#00ff66;">${dict.brokerBtn}</a>
             </div>`;
         document.getElementById("syncTime").innerText = new Date().toTimeString().split(' ')[0];
     }
@@ -406,7 +501,7 @@
     }
     document.getElementById("btnAdd").addEventListener("click", () => { const tk = addInput.value.trim().toUpperCase(); if(tk) { if(!suggestions.includes(tk)) suggestions.push(tk); mutate(tk, false); } });
 
-    // Alternador de Idiomas Cíclico (ES -> EN -> PT)
+    // Alternador de Idiomas Cíclico con refresco estructural instantáneo
     document.getElementById("langToggle").addEventListener("click", () => {
         if (lang === "es") lang = "en";
         else if (lang === "en") lang = "pt";
@@ -428,6 +523,7 @@
     window.addEventListener("DOMContentLoaded", () => {
         document.body.classList.toggle("light", theme === "light");
         document.getElementById("themeToggle").innerText = theme === "light" ? "☀️ LIGHT" : "🌙 DARK";
+        document.getElementById("p_fundamental").classList.add('active-pillar');
         translateUI();
         renderLists().then(() => { if(portfolio.length > 0) selectAsset(portfolio[0]); });
     });
