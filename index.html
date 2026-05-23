@@ -72,12 +72,15 @@
         
         .disclaimer-box { font-size: 8px; color: #ff3333; opacity: 0.8; padding: 4px; line-height: 1.2; font-style: italic; border-top: 1px solid var(--border); }
 
+        /* LISTA MULTI-BROKER OPTIMIZADA */
         .broker-comparator { border-top: 1px dashed var(--border); margin-top: 2px; padding-top: 4px; display: flex; flex-direction: column; gap: 4px; }
-        .broker-comparator h4 { font-size: 9px; color: var(--text); text-transform: uppercase; display: flex; justify-content: space-between; }
+        .broker-comparator h4 { font-size: 9px; color: var(--text); text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .broker-list-scroll { display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto; padding-right: 2px; }
         .broker-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 5px 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
         .broker-info h5 { font-size: 10px; font-weight: 700; color: var(--text); }
         .broker-info p { font-size: 8.5px; color: var(--muted); font-family: monospace; }
-        .broker-action-btn { background: var(--accent); color: #000; border: none; padding: 3px 8px; font-size: 9.5px; font-weight: 700; border-radius: 3px; cursor: pointer; text-decoration: none; }
+        .broker-action-btn { background: var(--accent); color: #000; border: none; padding: 3px 8px; font-size: 9.5px; font-weight: 700; border-radius: 3px; cursor: pointer; text-decoration: none; text-align: center; white-space: nowrap; }
+        .broker-action-btn:hover { filter: brightness(1.1); }
 
         .loading { text-align: center; padding: 16px; color: var(--muted); font-family: monospace; }
         @media (max-width: 768px) { .tabs { display: grid; } .grid { display: flex; flex-direction: column; height: calc(100vh - 70px); background: var(--bg); } .quad { display: none; width: 100%; height: 100%; } .quad.active-tab { display: flex; } }
@@ -162,19 +165,19 @@
                     <div class="analysis-pillars">
                         <div class="pillar-card" id="p_fundamental" onclick="selectPillar('fundamental')">
                             <h4 id="h_p1">1. Fundamental (40%)</h4>
-                            <div class="metric-item"><span>PER Est.</span><div id="m_pe">--</div></div>
-                            <div class="metric-item"><span>BPA (EPS)</span><div id="m_eps">--</div></div>
+                            <div class="metric-item"><span id="lbl_pe">PER Est.</span><div id="m_pe">--</div></div>
+                            <div class="metric-item"><span id="lbl_eps">BPA (EPS)</span><div id="m_eps">--</div></div>
                             <div class="metric-item"><span id="lbl_margin">Margen</span><div id="m_margin">--</div></div>
                         </div>
                         <div class="pillar-card" id="p_technical" onclick="selectPillar('technical')">
                             <h4 id="h_p2">2. Técnico (35%)</h4>
                             <div class="metric-item"><span>RSI (14d)</span><div id="m_rsi">--</div></div>
-                            <div class="metric-item"><span>Dev SMA20</span><div id="m_sma">--</div></div>
+                            <div class="metric-item"><span id="lbl_sma">Dev SMA20</span><div id="m_sma">--</div></div>
                             <div class="metric-item"><span>Beta</span><div id="m_beta">--</div></div>
                         </div>
                         <div class="pillar-card" id="p_sentiment" onclick="selectPillar('sentiment')">
                             <h4 id="h_p3">3. Sentimental (25%)</h4>
-                            <div class="metric-item"><span>Vol. Rel.</span><div id="m_rvol">--</div></div>
+                            <div class="metric-item"><span id="lbl_rvol">Vol. Rel.</span><div id="m_rvol">--</div></div>
                             <div class="metric-item"><span>Short Ratio</span><div id="m_short">--</div></div>
                             <div class="metric-item"><span id="lbl_insider">Insider</span><div id="m_insider">--</div></div>
                         </div>
@@ -184,7 +187,7 @@
 
                     <div class="broker-comparator">
                         <h4><span id="ui_brokerTitle">Pasarelas Operativas</span></h4>
-                        <div id="brokersContainer" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                        <div class="broker-list-scroll" id="brokersContainer"></div>
                     </div>
 
                     <div class="disclaimer-box" id="ui_disclaimer"></div>
@@ -202,7 +205,6 @@
     let cache = {};
     let currentSort = { portfolio: { key: 'weightedScore', asc: false }, suggestions: { key: 'weightedScore', asc: false } };
 
-    // Lista fallback local inmediata por si el internet o servidores externos van lentos
     const localFallbackDirectory = [
         { symbol: "BE", name: "Bloom Energy Corporation" }, { symbol: "MU", name: "Micron Technology" },
         { symbol: "AAPL", name: "Apple Inc." }, { symbol: "TSLA", name: "Tesla Motors" },
@@ -218,8 +220,10 @@
         es: {
             watchlist: "Mi Watchlist", mktScanner: "Escaner de Mercado", technicalChart: "Gráfico Técnico", matrixTitle: "Matriz de Confluencia",
             bannerTitle: "Score Algorítmico Ponderado", loadChart: "Selecciona un activo",
-            t_tk: "Ticker", t_pr: "Precio", t_sc: "Pond. Score", lbl_margin: "Margen", lbl_insider: "Insider", brokerTitle: "Estructuras de Corretaje Compatibles",
-            brokerBtn: "Revisar Bróker", searchPlaceholder: "Buscar ticker global o nombre (ej: BE, TSLA)...",
+            t_tk: "Ticker", t_pr: "Precio", t_sc: "Pond. Score", 
+            lbl_pe: "PER Est.", lbl_eps: "BPA (EPS)", lbl_margin: "Margen", lbl_sma: "Dev SMA20", lbl_rvol: "Vol. Rel.", lbl_insider: "Insider", 
+            h_p1: "1. Fundamental (40%)", h_p2: "2. Técnico (35%)", h_p3: "3. Sentimental (25%)",
+            brokerTitle: "Pasarelas y Brókers Compatibles", brokerBtn: "Operar", searchPlaceholder: "Buscar ticker global o nombre (ej: BE, TSLA)...",
             disclaimer: "⚠️ Advertencia de Datos: Esta plataforma procesa métricas matemáticas agregadas y flujos de información computada. No provee, bajo ninguna circunstancia, asesoramiento financiero, gestión de carteras ni recomendaciones explícitas o implícitas de inversión o compra.",
             initHelp: "<strong>Guía de Análisis Estadístico</strong> Selecciona un activo de tu lista para procesar las lecturas matriciales complejas en tiempo real.",
             
@@ -249,8 +253,10 @@
         en: {
             watchlist: "My Watchlist", mktScanner: "Market Scanner", technicalChart: "Technical Chart", matrixTitle: "Confluence Matrix",
             bannerTitle: "Weighted Algorithmic Score", loadChart: "Select an asset",
-            t_tk: "Ticker", t_pr: "Price", t_sc: "W. Score", lbl_margin: "Margin", lbl_insider: "Insider", brokerTitle: "Compatible Brokerage Frameworks",
-            brokerBtn: "Review Broker", searchPlaceholder: "Search global ticker or name (e.g. BE, TSLA)...",
+            t_tk: "Ticker", t_pr: "Price", t_sc: "W. Score", 
+            lbl_pe: "Est. PE", lbl_eps: "EPS", lbl_margin: "Margin", lbl_sma: "SMA20 Dev", lbl_rvol: "Rel. Vol.", lbl_insider: "Insider",
+            h_p1: "1. Fundamental (40%)", h_p2: "2. Technical (35%)", h_p3: "3. Sentiment (25%)",
+            brokerTitle: "Compatible Broker Frameworks", brokerBtn: "Trade", searchPlaceholder: "Search global ticker or name (e.g. BE, TSLA)...",
             disclaimer: "⚠️ Data Disclaimer: This platform processes aggregated mathematical metrics and computer data flows. It does not provide, under any circumstances, financial advice, portfolio management, or explicit/implicit investment or buy recommendations.",
             initHelp: "<strong>Statistical Analysis Guide</strong> Select an asset from your watchlist to process complex matrix reads in real time.",
             
@@ -279,6 +285,7 @@
         }
     };
 
+    // TRADUCCIÓN INTEGRAL DINÁMICA (CORREGIDA AL 100%)
     function translateUI() {
         const d = dictionary[lang];
         document.getElementById("ui_titleWatchlist").innerText = d.watchlist;
@@ -294,8 +301,19 @@
         ["th_pr1", "th_pr2"].forEach(id => document.getElementById(id).innerText = d.t_pr);
         ["th_sc1", "th_sc2"].forEach(id => document.getElementById(id).innerText = d.t_sc);
         
+        // Traducción de los encabezados de los Pilares
+        document.getElementById("h_p1").innerText = d.h_p1;
+        document.getElementById("h_p2").innerText = d.h_p2;
+        document.getElementById("h_p3").innerText = d.h_p3;
+
+        // Traducción de las etiquetas de métricas específicas
+        document.getElementById("lbl_pe").innerText = d.lbl_pe;
+        document.getElementById("lbl_eps").innerText = d.lbl_eps;
         document.getElementById("lbl_margin").innerText = d.lbl_margin;
+        document.getElementById("lbl_sma").innerText = d.lbl_sma;
+        document.getElementById("lbl_rvol").innerText = d.lbl_rvol;
         document.getElementById("lbl_insider").innerText = d.lbl_insider;
+        
         document.getElementById("langToggle").innerText = `🌐 ${lang.toUpperCase()}`;
 
         document.getElementById("tab_port").innerText = d.watchlist.split(" ")[1] || d.watchlist;
@@ -303,10 +321,42 @@
         document.getElementById("tab_chart").innerText = d.technicalChart.split(" ")[0];
         document.getElementById("tab_anal").innerText = d.matrixTitle.split(" ")[2] || d.matrixTitle;
 
+        renderBrokersList();
+
         if(!selected) {
             document.getElementById("explanationDynamicBox").innerHTML = d.initHelp;
-            document.getElementById("ui_loadChart").innerText = d.loadChart;
+            if(document.getElementById("ui_loadChart")) document.getElementById("ui_loadChart").innerText = d.loadChart;
+        } else {
+            const assetData = cache[selected] || generateAdvancedMetrics(selected);
+            const confBadge = document.getElementById("confluenceBadge");
+            if (assetData.weightedScore >= 75) confBadge.innerText = d.conf_high;
+            else if (assetData.weightedScore >= 45) confBadge.innerText = d.conf_mid;
+            else confBadge.innerText = d.conf_low;
+            
+            renderDynamicInterpretation();
         }
+    }
+
+    function renderBrokersList() {
+        const container = document.getElementById("brokersContainer");
+        const btnText = dictionary[lang].brokerBtn;
+        
+        const brokersData = [
+            { name: "Pepperstone Gateway", desc: "STP Pricing • Tier-1 Liquidity", url: "https://tradehunter.io/gateway?broker=pepperstone" },
+            { name: "IC Markets Global", desc: "True ECN Account • Raw Spreads desde 0.0 pips", url: "https://tradehunter.io/gateway?broker=icmarkets" },
+            { name: "Interactive Brokers", desc: "Direct Market Access (DMA) • Acciones Globales", url: "https://tradehunter.io/gateway?broker=ibkr" },
+            { name: "XM Group", desc: "Bonos de Ejecución • Ultra Low Spreads", url: "https://tradehunter.io/gateway?broker=xm" }
+        ];
+
+        container.innerHTML = brokersData.map(b => `
+            <div class="broker-card">
+                <div class="broker-info">
+                    <h5>${b.name}</h5>
+                    <p>${b.desc}</p>
+                </div>
+                <a href="${b.url}" target="_blank" class="broker-action-btn">${btnText}</a>
+            </div>
+        `).join('');
     }
 
     function selectPillar(pillarName) {
@@ -376,7 +426,6 @@
 
     async function dataFetch(ticker) {
         try {
-            // Se utiliza el Proxy AllOrigins para evitar bloqueos de CORS de Yahoo Finance
             const proxy = "https://api.allorigins.win/get?url=";
             const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=3mo`;
             const res = await fetch(proxy + encodeURIComponent(url));
@@ -467,17 +516,9 @@
         document.getElementById("m_rvol").innerText = `${d.relVol}x`; document.getElementById("m_short").innerText = `${d.shortRatio}%`; document.getElementById("m_insider").innerText = d.insiderFlow;
 
         renderDynamicInterpretation();
-
-        const brokersContainer = document.getElementById("brokersContainer");
-        brokersContainer.innerHTML = `
-            <div class="broker-card">
-                <div class="broker-info"><h5>Pepperstone Gateway</h5><p>STP Pricing • Tier-1 Liquidity</p></div>
-                <a href="https://tradehunter.io/gateway?broker=pepperstone" target="_blank" class="broker-action-btn">${dict.brokerBtn}</a>
-            </div>`;
         document.getElementById("syncTime").innerText = new Date().toTimeString().split(' ')[0];
     }
 
-    // NUEVO MOTOR DE BUSQUEDA ASÍNCRONO BLINDADO CONTRA CORTES DE CORS
     const addInput = document.getElementById("addInput"); 
     const sugDropdown = document.getElementById("sugDropdown");
     let searchTimeout = null;
@@ -502,14 +543,12 @@
         
         if (!query) { sugDropdown.style.display = "none"; return; }
         
-        // Muestra de inmediato coincidencias locales preestablecidas para evitar esperas vacías
         const localMatches = localFallbackDirectory.filter(c => c.symbol.toLowerCase().includes(query) || c.name.toLowerCase().includes(query));
         if(localMatches.length > 0) {
             localMatches.forEach(m => appendSuggestionItem(m.symbol, m.name));
             sugDropdown.style.display = "block";
         }
 
-        // Consulta en paralelo a la base de datos de Yahoo a través del proxy robusto AllOrigins
         searchTimeout = setTimeout(async () => {
             try {
                 const proxy = "https://api.allorigins.win/get?url=";
@@ -520,19 +559,15 @@
                 const json = JSON.parse(raw.contents);
                 
                 if (json.quotes && json.quotes.length > 0) {
-                    // Evitamos duplicados limpiando la pre-carga si encontramos datos globales nuevos
                     sugDropdown.innerHTML = ""; 
                     json.quotes.forEach(m => {
                         if (!m.symbol) return;
-                        // Excluir símbolos que contengan caracteres extraños que rompan TradingView
                         if (m.symbol.includes("=") || m.symbol.includes("^")) return;
-                        
                         appendSuggestionItem(m.symbol, m.longname || m.shortname || 'Equity Asset');
                     });
                     sugDropdown.style.display = "block";
                 }
             } catch (e) {
-                // En caso de fallo total externo, mantenemos lo que haya en local
                 if (sugDropdown.children.length === 0) sugDropdown.style.display = "none";
             }
         }, 300);
@@ -557,8 +592,7 @@
     document.getElementById("langToggle").addEventListener("click", () => {
         lang = lang === "es" ? "en" : "es";
         localStorage.setItem("th_lang", lang);
-        translateUI();
-        if(selected) selectAsset(selected);
+        translateUI(); 
     });
 
     document.getElementById("themeToggle").addEventListener("click", () => {
